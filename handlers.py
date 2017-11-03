@@ -23,3 +23,14 @@ def products_page():
 def product_page(product_id):
     product = current_app.store.get_product(product_id)
     return render_template('product.html', product=product)
+
+
+@site.route('/register' , methods=['GET','POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html')
+    user = User(request.form['name'] , request.form['surname'], request.form[nickname], request.form['password'], request.form['email'])
+    db.session.add(user)
+    db.session.commit()
+    flash('Registration is successful!!')
+    return redirect(url_for('login'))
