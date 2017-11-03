@@ -29,7 +29,7 @@ def product_page(product_id):
 def register():
     if request.method == 'GET':
         return render_template('register.html')
-    user = User(request.form['name'] , request.form['surname'], request.form[nickname], request.form['password'], request.form['email'])
+    user = User(request.form['name'] , request.form['surname'], request.form['nickname'], request.form['password'], request.form['email'])
     db.session.add(user)
     db.session.commit()
     flash('Registration is successful!!')
