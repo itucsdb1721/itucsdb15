@@ -1,18 +1,14 @@
-class Users:
-    def __init__(self):
-        self.users = {}
-        self.last_user_id = 0
+from flask import current_app
+from flask_login import UserMixin
 
-    def add_user(self, user):
-        self.last_user_id += 1
-        self.users[self.last_user_id] = user
-        user._id = self.last_user_id
 
-    def delete_user(self, user_id):
-        del self.users[user_id]
+class User(UserMixin):
+    def __init__(self, name, surname, email, nickname, password):
+        self.nickname = nickname
+        self.password = password
+        self.name = name
+        self.surname = surname
+        self.email = email
 
-    def get_user(self, user_id):
-        return self.users[user_id]
-
-    def get_users(self):
-        return self.users
+    def get_id(self):
+        return self.nickname
