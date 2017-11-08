@@ -47,7 +47,7 @@ class Store:
                         for key, name, quantity, kind, allergens, seller in cursor]
         return products
     
-     def add_user(self, users):
+    def add_user(self, users):
         with dbapi2.connect(self.dbfile) as connection:
             cursor = connection.cursor()
             query = "INSERT INTO USERS (NAME, SURNAME, NICKNAME, EMAIL, PASSWORD ) VALUES (?, ?, ?, ?, ?)"
