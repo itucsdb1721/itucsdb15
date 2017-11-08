@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 from flask import current_app
 
-from flask import request
+from flask import request, redirect
 
 from datetime import datetime
 
@@ -36,4 +36,4 @@ def register():
     #db.session.add(user)
     #db.session.commit()
     #^^flash('Registration is successful!!')
-    #return redirect(url_for('login'))
+    return redirect(url_for('site.home_page'))
