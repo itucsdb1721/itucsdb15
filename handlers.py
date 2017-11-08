@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 from flask import current_app
 
-from flask import request
+from flask import request, redirect
 
 from datetime import datetime
 
