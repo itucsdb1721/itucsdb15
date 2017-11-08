@@ -1,8 +1,11 @@
 from flask import Blueprint, render_template
 from flask import current_app
 
+from flask import request
+
 from datetime import datetime
 
+from users import User
 
 site = Blueprint('site', __name__)
 
@@ -32,5 +35,5 @@ def register():
     user = User(request.form['name'] , request.form['surname'], request.form['nickname'], request.form['password'], request.form['email'])
     #db.session.add(user)
     #db.session.commit()
-    flash('Registration is successful!!')
+    #^^flash('Registration is successful!!')
     #return redirect(url_for('login'))
