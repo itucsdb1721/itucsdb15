@@ -16,7 +16,7 @@ def create_app():
 def main():
     app = create_app()
     #debug = app.config['DEBUG']
-    app.store = Store(os.path.join("\\", "products.sql"))
+    #app.store = Store(os.path.join("\\", "products.sql"))
     port = app.config.get('PORT', 8080)
     app.run(host='0.0.0.0', port=port)
 
