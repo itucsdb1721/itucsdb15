@@ -19,13 +19,13 @@ def home_page():
 
 @site.route('/products')
 def products_page():
-    products = current_app.store.get_products()
-    return render_template('products.html', products = sorted(products.items()))
+    #products = current_app.store.get_products()
+    return render_template('products.html')#, products = sorted(products.items()))
 
 @site.route('/product/<int:product_id>')
 def product_page(product_id):
-    product = current_app.store.get_product(product_id)
-    return render_template('product.html', product=product)
+    #product = current_app.store.get_product(product_id)
+    return render_template('product.html')#, product=product)
 
 
 @site.route('/register' , methods=['GET','POST'])
