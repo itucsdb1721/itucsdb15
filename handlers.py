@@ -36,4 +36,4 @@ def register():
     #db.session.add(user)
     #db.session.commit()
     #^^flash('Registration is successful!!')
-    return redirect('home.html')
+    return redirect('/')
