@@ -1,5 +1,5 @@
 from flask import current_app
-from passlib.apps import custom_app_context as pwd_context
+#from passlib.apps import custom_app_context as pwd_context
 
 class User:
     def __init__(self, name, surname, email, nickname, password):
@@ -12,5 +12,6 @@ class User:
     def get_id(self):
         return self.nickname
 
-def hashing(password):
-    return pwd_context.encrypt(password)
+#def hashing(password):
+
+    #return pwd_context.encrypt(password)
