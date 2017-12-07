@@ -28,15 +28,21 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="{{ url_for('site.home_page') }}">Home
+              <a class="nav-link" href="{{ url_for('home_page') }}">Home
                 <span class="sr-only">(current)</span>
               </a>
             </li>
+          {% if not current_user.is_authenticated %}
              <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('site.register') }}">Register</a>
+              <a class="nav-link" href="{{ url_for('register') }}">Register</a>
             </li>
+
               <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('site.products_page') }}">Products</a>
+              <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+            </li>
+          {% endif %}
+              <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('products_page') }}">Products</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">About</a>
@@ -47,6 +53,10 @@
             <li class="nav-item">
               <a class="nav-link" href="#">Contact</a>
             </li>
+              {% if current_user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="#">Account</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout_page') }}">Logout</a></li>
+              {% endif %}
           </ul>
         </div>
       </div>

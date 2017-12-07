@@ -1,3 +1,9 @@
+<script>
+    document.getElementById("demo").innerHTML= "hello";
+    var x = document.createElement("VAR");
+    x=error;
+</script>
+
 {% extends "layout.html" %}
 {% block content %}
   <form role="form" action="" method=post class="form-horizontal">
@@ -20,15 +26,7 @@
         <div class="controls">
           <input type="text" id="nickname" name="nickname" class="input-xlarge"
             placeholder="Enter Nickname" value="{{ request.form.nickname }}"
-            required>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <div class="controls">
-          <input type="text" id="password" name="password" class="input-xlarge"
-            placeholder="Enter Password" value="{{ request.form.password }}"
-            required>
+            required>{{ error }}
         </div>
     </div>
 
@@ -40,6 +38,13 @@
         </div>
     </div>
 
+      <div class="control-group">
+        <div class="controls">
+          <input type="text" id="password" name="password" class="input-xlarge"
+            placeholder="Enter Password" value="{{ request.form.password }}"
+            required>
+        </div>
+    </div>
     <div class="control-group">
         <div class="controls">
           <button type="submit" class="btn btn-success">Signup</button>

@@ -1,87 +1,57 @@
 import psycopg2 as dbapi2
-from products import Product
-from users import User
+from users import *
+from flask import Flask
 
+app = Flask(__name__)
 
 class Store:
-    def __init__(self, dbfile):
-        self.dbfile = dbfile
-        self.last_key = None
-
-    def add_product(self, product):
-        with dbapi2.connect(self.dbfile) as connection:
+    def add_user(conf, users):
+        with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
-            query = "INSERT INTO product (ID, PNAME, QUANTITY, KIND, ALLERGENS, SELLER) VALUES (?, ?, ?, ?, ?, ?)"
-            cursor.execute(query, (product.name, product.quantity, product.kind, product.allergens, product.seller))
+            query2 = """INSERT INTO USERS (NM, SURNAME, NICKNAME, EMAIL, PASSWORD ) VALUES (%s, %s, %s, %s, %s)"""
+            cursor.execute(query2, (users.name, users.surname, users.nickname, users.email, users.password))
             connection.commit()
-            self.last_key = cursor.lastrowid
 
-    def delete_product(self, key):
-        with dbapi2.connect(self.dbfile) as connection:
+    def delete_user(conf, key):
+        with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
-            query = "DELETE FROM product WHERE (ID = ?)"
+            query = "DELETE FROM USERS WHERE (ID = %s)"
             cursor.execute(query, (key,))
             connection.commit()
 
-    def update_product(self, key, name, quantity, kind, allergens, seller):
-        with dbapi2.connect(self.dbfile) as connection:
+    def update_user(conf, key, name, surname, nickname, email, password):
+        with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
-            query = "UPDATE product SET PNAME = ?, QUANTITY = ?, KIND = ?, ALLERGENS = ?, SELLER = ?, WHERE (ID = ?)"
-            cursor.execute(query, (name, quantity, kind, allergens, seller, key))
-            connection.commit()
-
-    def get_product(self, key):
-        with dbapi2.connect(self.dbfile) as connection:
-            cursor = connection.cursor()
-            query = "SELECT PNAME, QUANTITY, KIND, ALLERGENS, SELLER FROM product WHERE (ID = ?)"
-            cursor.execute(query, (key,))
-            name, quantity, kind, allergens, seller = cursor.fetchone()
-        return Product(name, quantity, kind, allergens, seller)
-
-    def get_products(self):
-        with dbapi2.connect(self.dbfile) as connection:
-            cursor = connection.cursor()
-            query = "SELECT ID, PNAME, QUANTITY, KIND, ALLERGENS, SELLER FROM product ORDER BY ID"
-            cursor.execute(query)
-            products = [(key, Product(name, quantity, kind, allergens, seller))
-                        for key, name, quantity, kind, allergens, seller in cursor]
-        return products
-    
-    def add_user(self, users):
-        with dbapi2.connect(self.dbfile) as connection:
-            cursor = connection.cursor()
-            query = "INSERT INTO USERS (NAME, SURNAME, NICKNAME, EMAIL, PASSWORD ) VALUES (?, ?, ?, ?, ?)"
-            cursor.execute(query, (users.name, users.surname, users.nickname, users.email, users.password))
-            connection.commit()
-            self.last_key = cursor.lastrowid
-
-    def delete_user(self, key):
-        with dbapi2.connect(self.dbfile) as connection:
-            cursor = connection.cursor()
-            query = "DELETE FROM USERS WHERE (ID = ?)"
-            cursor.execute(query, (key,))
-            connection.commit()
-
-    def update_user(self, key, name, surname, nickname, email, password):
-        with dbapi2.connect(self.dbfile) as connection:
-            cursor = connection.cursor()
-            query = "UPDATE USERS SET NAME = ?,SURNAME = ?, NICKNAME = ?, EMAIL = ?, PASSWORD = ? WHERE (ID = ?)"
+            query = "UPDATE USERS SET NM = %s,SURNAME = %s, NICKNAME = %s, EMAIL = %s, PASSWORD = %s WHERE (ID = %d)"
             cursor.execute(query, (name, surname, nickname, email, password, key))
             connection.commit()
 
-    def get_user(self, key):
-        with dbapi2.connect(self.dbfile) as connection:
+    def get_user(conf, username):
+        with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
-            query = "SELECT NAME, SURNAME, NICKNAME, EMAIL, PASSWORD FROM USERS WHERE (ID = ?)"
-            cursor.execute(query, (key,))
+            query = "SELECT NM, SURNAME, NICKNAME, EMAIL, PASSWORD FROM USERS WHERE NICKNAME = %s"
+            cursor.execute(query, (username,))
             name, surname, nickname, email, password = cursor.fetchone()
         return User(name, surname, nickname, email, password)
 
-    def get_users(self):
-        with dbapi2.connect(self.dbfile) as connection:
+    def get_users(conf):
+        with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
-            query = "SELECT ID, NAME, SURNAME, NICKNAME, EMAIL, PASSWORD FROM USERS ORDER BY ID"
+            query = "SELECT ID, NM, SURNAME, NICKNAME, EMAIL, PASSWORD FROM USERS ORDER BY ID"
             cursor.execute(query)
             users = [(key, User(name, surname, nickname, email, password))
                       for key, name, surname, nickname, email, password in cursor]
         return users
+
+    def is_exist(conf, username):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query = "SELECT PASSWORD FROM USERS WHERE NICKNAME = %s"
+            cursor.execute(query, (username,))
+            if cursor.fetchone():
+                (hashed,) = cursor.fetchone()
+                return hashed
+            else:
+                return False
+
+
