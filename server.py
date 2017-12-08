@@ -3,15 +3,14 @@ import json
 import os
 import psycopg2 as dbapi2
 import re
-import settings
 
 from flask import Flask, Blueprint, flash
 from flask import redirect, request, session
 from flask import render_template
 from flask.helpers import url_for
-from flask_login import LoginManager, login_user, logout_user, UserMixin
+from flask_login import LoginManager, login_user, logout_user, current_user
 from passlib.apps import custom_app_context as pwd_context
-from users import User
+from users import User, hashing
 from store import Store
 
 app = Flask(__name__)
@@ -46,7 +45,7 @@ def initialize_database():
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
 
-        query = """DROP TABLE IF EXISTS USERS, PRODUCTS, HOMEMADE_FOOD, WOODEN_CRAFT"""
+        query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
 
         query = """CREATE TABLE USERS (
@@ -60,24 +59,42 @@ def initialize_database():
         cursor.execute(query)
 
         query = """CREATE TABLE PRODUCTS (
-                                 PRODUCT_ID SERIAL PRIMARY KEY,
-                                 PNAME CHARACTER(40),
-                                 PKIND VARCHAR(100) NOT NULL,
-                                 PRICE REAL,
-                                 USER_ID INTEGER NOT NULL REFERENCES USERS(USER_ID)
-                                 )"""
+                                         PRODUCT_ID SERIAL PRIMARY KEY,
+                                         PNAME CHARACTER(40),
+                                         PKIND VARCHAR(100) NOT NULL,
+                                         PRICE REAL,
+                                         USER_ID INTEGER NOT NULL REFERENCES USERS(USER_ID) ON DELETE CASCADE
+                                         )"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE COMMENTS (
+                                          COMMENT_ID SERIAL PRIMARY KEY,
+                                          USER_ID SERIAL REFERENCES USERS(USER_ID) ON DELETE CASCADE,
+                                          PRODUCT_ID SERIAL REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
+                                          WRITE_DATE DATE NOT NULL,
+                                          COMMENT VARCHAR(200) NOT NULL
+                                          )"""
         cursor.execute(query)
 
         query = """CREATE TABLE HOMEMADE_FOOD (
-                                 PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID),
+                                 PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
                                  QUANTITY REAL,
                                  FOOD_KIND VARCHAR(100) NOT NULL,
                                  DESCRIPTION TEXT
                                  )"""
         cursor.execute(query)
 
+        query = """CREATE TABLE CLOTHES (
+                                         PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
+                                         CLOTHE_TYPE VARCHAR(50) NOT NULL,
+                                         SIZE VARCHAR(20) NOT NULL,
+                                         MATERIAL VARCHAR(20) NOT NULL,
+                                         DESCRIPTION TEXT
+                                         )"""
+        cursor.execute(query)
+
         query = """CREATE TABLE WOODEN_CRAFT (
-                                 PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID),
+                                 PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
                                  CSIZE INTEGER,
                                  COLOUR CHARACTER(40),
                                  CRAFT_KIND VARCHAR(100) NOT NULL,
@@ -127,6 +144,39 @@ def logout_page():
     flash('You have logged out.')
     return redirect(url_for('home_page'))
 
+@app.route('/account')
+def account():
+    return render_template('account.html')
+
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    if request.method == 'GET':
+        return render_template('change_password.html')
+    oldpassword = request.form['oldpassword']
+    truepassword = Store.is_exist(app.config['dsn'], current_user.nickname)
+    if pwd_context.verify(oldpassword, truepassword):
+        if (request.form['newpassword'] == request.form['newpassword2']):
+            Store.update_password(app.config['dsn'], current_user.nickname, hashing(request.form['newpassword']))
+        else:
+            return render_template('change_password.html', error2 = 'Enter the new password again.')
+    else:
+        return render_template('change_password.html', error1='Wrong password.')
+
+    return redirect(url_for('account'))
+
+@app.route('/delete_account', methods=['GET', 'POST'])
+def delete_account():
+    if request.method == 'GET':
+        return render_template('delete_account.html')
+    entered_password = request.form['password']
+    truepassword = Store.is_exist(app.config['dsn'], current_user.nickname)
+    if pwd_context.verify(entered_password, truepassword):
+        user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+        logout_user()
+        Store.delete_user(app.config['dsn'], user_id)
+        return redirect(url_for('home_page'))
+    else:
+        return render_template('delete_account.html', error = 'Wrong password.')
 
 @app.route('/homemade_foods', methods=['GET', 'POST'])
 def homemade_foods_page():
@@ -146,8 +196,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='postgres' password='AkYoL9502'
-                               host='localhost' port=5432 dbname='kermes_db'"""
-    
-    app.run(host='0.0.0.0', port=port, debug=debug)
+        app.config['dsn'] = """user='vagrant' password='vagrant'
+                                        host='localhost' port=5432 dbname='itucsdb'"""
+
+        app.run(host='0.0.0.0', port=port, debug=debug)
 

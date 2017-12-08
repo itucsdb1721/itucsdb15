@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+    <form role="form" action="" method=post class="form-horizontal">
+    <div class="control-group">
+        <div class="controls">
+          <input type="password" id="password" name="password" class="input-xlarge"
+            placeholder="Enter Your Password" value="{{ request.form.password }}"
+            required>{{ error }}
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+          <button onclick="myFunction()">Delete</button>
+
+<script>
+function myFunction() {
+    confirm("Are you sure about deleting your account? All of your products and comments will be deleted.");
+}
+</script>
+        </div>
+    </div>
+    </form>
+{% endblock %}
