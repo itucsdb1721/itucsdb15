@@ -3,7 +3,7 @@ from passlib.apps import custom_app_context as pwd_context
 login_manager = flask_login.LoginManager()
 
 class User(flask_login.UserMixin):
-    def __init__(self, name, surname, email, nickname, password):
+    def __init__(self, name, surname, nickname, email, password):
         self.nickname = nickname
         self.password = hashing(password)
         self.name = name

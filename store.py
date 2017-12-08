@@ -31,8 +31,8 @@ class Store:
             cursor = connection.cursor()
             query = "SELECT NM, SURNAME, NICKNAME, EMAIL, PASSWORD FROM USERS WHERE NICKNAME = %s"
             cursor.execute(query, (username,))
-            name, surname, nickname, email, password = cursor.fetchone()
-        return User(name, surname, nickname, email, password)
+            (name, surname, nickname, email, password) = cursor.fetchone()
+            return User(name, surname, nickname, email, password)
 
     def get_users(conf):
         with dbapi2.connect(conf) as connection:
@@ -48,10 +48,8 @@ class Store:
             cursor = connection.cursor()
             query = "SELECT PASSWORD FROM USERS WHERE NICKNAME = %s"
             cursor.execute(query, (username,))
-            if cursor.fetchone():
-                (hashed,) = cursor.fetchone()
+            for row in cursor:
+                (hashed,) = row
                 return hashed
-            else:
-                return False
 
 

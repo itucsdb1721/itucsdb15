@@ -49,30 +49,26 @@ def initialize_database():
                           ID SERIAL PRIMARY KEY,
                           NM VARCHAR(80) NOT NULL,
                           SURNAME VARCHAR(80) NOT NULL,
-                          NICKNAME VARCHAR(80) NOT NULL,
+                          NICKNAME VARCHAR(80) UNIQUE NOT NULL,
                           EMAIL VARCHAR(80) NOT NULL,
                           PASSWORD VARCHAR(200) NOT NULL
                           )"""
         cursor.execute(query)
 
-        query = """INSERT INTO USERS (NM, SURNAME, NICKNAME, EMAIL, PASSWORD)
-                              VALUES ('?', '?', '?', '?', '?')"""
-        cursor.execute(query)
-
         connection.commit()
+
     return redirect(url_for('home_page'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        return render_template('register.html', error= "")
-    if (request.form['password']== request.form['password2']):
-        user = User(request.form['name'], request.form['surname'], request.form['nickname'], request.form['email'], request.form['password'])
-    else:
-        return render_template('register.html', error2="Enter password again.")
+        return render_template('register.html')
+    #if (request.form['password'] == request.form['password2']):
+    user = User(request.form['name'], request.form['surname'], request.form['nickname'], request.form['email'], request.form['password'])
+    #else:
+    #    return render_template('register.html', error2="Enter password again.")
     if Store.is_exist(app.config['dsn'], request.form['nickname']):
-        error1 = "This username is already taken."
         return render_template('register.html', error = "This username is already taken.")
     Store.add_user(app.config['dsn'], user)
     return redirect(url_for('login'))
@@ -83,12 +79,17 @@ def login():
         return render_template('login.html')
     username = request.form['username']
     password = request.form['password']
-    if Store.is_exist(app.config['dsn'], username):
+    truepassword = Store.is_exist(app.config['dsn'], username)
+    if truepassword:
         user = Store.get_user(app.config['dsn'], username)
-        login_user(user)
-        return redirect(url_for('home_page'))
+        if pwd_context.verify(password, truepassword):
+            login_user(user)
+            return redirect(url_for('home_page'))
+        else:
+            return redirect(url_for('login'))
+
     else:
-         return redirect(url_for('login'))
+        return redirect(url_for('login'))
 
 @app.route('/logout')
 def logout_page():
@@ -115,8 +116,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='vagrant' password='vagrant'
-                               host='itucsdb1721.mybluemix.net' port=5432 dbname='itucsdb1721'"""
+        app.config['dsn'] = """user='postgres' password='vagrant'
+                               host='localhost' port=5432 dbname='database'"""
     
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    app.run(host='localhost', port=port, debug=debug)
 
