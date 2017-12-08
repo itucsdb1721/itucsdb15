@@ -31,7 +31,10 @@ lm = LoginManager()
 
 @lm.user_loader
 def load_user(user_id):
-    return Store.get_user(app.config['dsn'],user_id)
+    if Store.get_user(app.config['dsn'],user_id):
+        return Store.get_user(app.config['dsn'],user_id)
+    else:
+        return redirect(url_for('home_page'))
 
 @app.route('/')
 def home_page():
