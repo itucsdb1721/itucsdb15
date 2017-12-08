@@ -116,8 +116,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='postgres' password='vagrant'
-                               host='localhost' port=5432 dbname='database'"""
+        app.config['dsn'] = """user='vagrant' password='vagrant'
+                               host='localhost' port=54321 dbname='itucsdb1721'"""
     
     app.run(host='localhost', port=port, debug=debug)
 
