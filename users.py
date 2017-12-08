@@ -1,8 +1,8 @@
-import flask_login
+from flask.ext.login import LoginManager, UserMixin
 from passlib.apps import custom_app_context as pwd_context
-login_manager = flask_login.LoginManager()
+login_manager = LoginManager()
 
-class User(flask_login.UserMixin):
+class User(UserMixin):
     def __init__(self, name, surname, nickname, email, password):
         self.nickname = nickname
         self.password = hashing(password)
