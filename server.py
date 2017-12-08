@@ -46,17 +46,43 @@ def initialize_database():
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
 
-        query = """DROP TABLE IF EXISTS USERS"""
+        query = """DROP TABLE IF EXISTS USERS, PRODUCTS, HOMEMADE_FOOD, WOODEN_CRAFT"""
         cursor.execute(query)
 
         query = """CREATE TABLE USERS (
-                          ID SERIAL PRIMARY KEY,
-                          NM VARCHAR(80) NOT NULL,
-                          SURNAME VARCHAR(80) NOT NULL,
-                          NICKNAME VARCHAR(80) UNIQUE NOT NULL,
-                          EMAIL VARCHAR(80) NOT NULL,
-                          PASSWORD VARCHAR(200) NOT NULL
-                          )"""
+                                 USER_ID SERIAL PRIMARY KEY,
+                                 NM VARCHAR(80) NOT NULL,
+                                 SURNAME VARCHAR(80) NOT NULL,
+                                 NICKNAME VARCHAR(80) NOT NULL,
+                                 EMAIL VARCHAR(80) NOT NULL,
+                                 PASSWORD VARCHAR(200) NOT NULL
+                                 )"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE PRODUCTS (
+                                 PRODUCT_ID SERIAL PRIMARY KEY,
+                                 PNAME CHARACTER(40),
+                                 PKIND VARCHAR(100) NOT NULL,
+                                 PRICE REAL,
+                                 USER_ID INTEGER NOT NULL REFERENCES USERS(USER_ID)
+                                 )"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE HOMEMADE_FOOD (
+                                 PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID),
+                                 QUANTITY REAL,
+                                 FOOD_KIND VARCHAR(100) NOT NULL,
+                                 DESCRIPTION TEXT
+                                 )"""
+        cursor.execute(query)
+
+        query = """CREATE TABLE WOODEN_CRAFT (
+                                 PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID),
+                                 CSIZE INTEGER,
+                                 COLOUR CHARACTER(40),
+                                 CRAFT_KIND VARCHAR(100) NOT NULL,
+                                 DESCRIPTION TEXT
+                                 )"""
         cursor.execute(query)
 
         connection.commit()
@@ -102,10 +128,10 @@ def logout_page():
     return redirect(url_for('home_page'))
 
 
-@app.route('/products')
-def products_page():
+@app.route('/homemade_foods', methods=['GET', 'POST'])
+def homemade_foods_page():
     #products = current_app.store.get_products()
-    return render_template('products.html' )#,products = sorted(products.items()))
+    return render_template('homemade_foods.html')#,products = sorted(products.items()))
 
 if __name__ == '__main__':
     lm.init_app(app)
@@ -120,8 +146,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='vagrant' password='vagrant'
-                               host='localhost' port=5432 dbname='itucsdb'"""
+        app.config['dsn'] = """user='postgres' password='AkYoL9502'
+                               host='localhost' port=5432 dbname='kermes_db'"""
     
     app.run(host='0.0.0.0', port=port, debug=debug)
 
