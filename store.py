@@ -1,5 +1,5 @@
 import psycopg2 as dbapi2
-from users import User
+from users import *
 from flask import Flask
 
 app = Flask(__name__)
