@@ -31,8 +31,9 @@ class Store:
             cursor = connection.cursor()
             query = "SELECT NM, SURNAME, NICKNAME, EMAIL, PASSWORD FROM USERS WHERE NICKNAME = %s"
             cursor.execute(query, (username,))
-            (name, surname, nickname, email, password) = cursor.fetchone()
-            return User(name, surname, nickname, email, password)
+            for row in cursor:
+                (name, surname, nickname, email, password) = row
+                return User(name, surname, nickname, email, password)
 
     def get_users(conf):
         with dbapi2.connect(conf) as connection:
