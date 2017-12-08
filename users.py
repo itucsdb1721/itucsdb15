@@ -1,4 +1,4 @@
-from flask.ext.login import LoginManager, UserMixin
+from flask_login import LoginManager, UserMixin
 from passlib.apps import custom_app_context as pwd_context
 login_manager = LoginManager()
 
