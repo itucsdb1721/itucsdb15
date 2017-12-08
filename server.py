@@ -178,7 +178,7 @@ def delete_account():
     else:
         return render_template('delete_account.html', error = 'Wrong password.')
 
-@app.route('/homemade_foods', methods=['GET', 'POST'])
+@app.route('/homemade_foods')
 def homemade_foods_page():
     #products = current_app.store.get_products()
     return render_template('homemade_foods.html')#,products = sorted(products.items()))
