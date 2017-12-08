@@ -12,6 +12,7 @@ from flask.helpers import url_for
 from users import User
 from store import Store
 from flask_login import LoginManager, login_user, logout_user
+from passlib.apps import custom_app_context as pwd_context
 
 app = Flask(__name__)
 app.secret_key = 'helloworld'
