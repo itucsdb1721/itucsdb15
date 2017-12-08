@@ -9,10 +9,10 @@ from flask import Flask, Blueprint, flash
 from flask import redirect, request, session
 from flask import render_template
 from flask.helpers import url_for
+from flask_login import LoginManager, login_user, logout_user, UserMixin
+from passlib.apps import custom_app_context as pwd_context
 from users import User
 from store import Store
-from flask_login import LoginManager, login_user, logout_user
-from passlib.apps import custom_app_context as pwd_context
 
 app = Flask(__name__)
 app.secret_key = 'helloworld'
