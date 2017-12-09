@@ -15,7 +15,7 @@ class ProductStore:
                 query = """INSERT INTO HOMEMADE_FOOD (QUANTITY, FOOD_KIND, DESCRIPTION) VALUES (%f, %s, %s)"""
                 cursor.execute(query, (HomemadeFood.quantity, HomemadeFood.food_kind, HomemadeFood.description))
             elif products.kind == "Wooden Craft":
-                query = """INSERT INTO WOODEN_CRAFT (CSIZE, COLOUR, CRAFT_KIND, DESCRIPTION) VALUES (%d, %s, %s, %s)"""
+                query = """INSERT INTO WOODEN_CRAFT (CSIZE, COLOUR, CRAFT_KIND, DESCRIPTION) VALUES (%s, %s, %s, %s)"""
                 cursor.execute(query, (WoodenCraft.size, WoodenCraft.colour, WoodenCraft.craft_kind, WoodenCraft.description))
             #elif products.kind == "Knitting Work":
 

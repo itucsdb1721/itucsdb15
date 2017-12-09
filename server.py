@@ -12,6 +12,8 @@ from flask_login import LoginManager, login_user, logout_user, current_user
 from passlib.apps import custom_app_context as pwd_context
 from users import User, hashing
 from store import Store
+from products import *
+from clothes_store import ClotheStore
 
 app = Flask(__name__)
 app.secret_key = 'helloworld'
@@ -37,6 +39,7 @@ def load_user(user_id):
 
 @app.route('/')
 def home_page():
+    users = Store.get_users(app.config['dsn'])
     return render_template('index.html')
 
 
@@ -60,9 +63,10 @@ def initialize_database():
 
         query = """CREATE TABLE PRODUCTS (
                                          PRODUCT_ID SERIAL PRIMARY KEY,
+                                         PIC TEXT,
                                          PNAME CHARACTER(40),
                                          PKIND VARCHAR(100) NOT NULL,
-                                         PRICE REAL,
+                                         PRICE VARCHAR(10),
                                          USER_ID INTEGER NOT NULL REFERENCES USERS(USER_ID) ON DELETE CASCADE
                                          )"""
         cursor.execute(query)
@@ -86,8 +90,8 @@ def initialize_database():
 
         query = """CREATE TABLE CLOTHES (
                                          PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
-                                         CLOTHE_TYPE VARCHAR(50) NOT NULL,
-                                         SIZE VARCHAR(20) NOT NULL,
+                                         CTYPE VARCHAR(50) NOT NULL,
+                                         CSIZE VARCHAR(20) NOT NULL,
                                          MATERIAL VARCHAR(20) NOT NULL,
                                          DESCRIPTION TEXT
                                          )"""
@@ -178,6 +182,17 @@ def delete_account():
     else:
         return render_template('delete_account.html', error = 'Wrong password.')
 
+@app.route('/add_clothes', methods=['GET', 'POST'])
+def add_clothes():
+    if request.method == 'GET':
+        return render_template('add_clothes.html')
+    seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+    product = Product(request.form['name'], request.form['pic'], "clothe",request.form['price'], seller_id)
+    clothe = Clothes(request.form['type'], request.form['size'], request.form['material'], request.form['description'])
+    ClotheStore.add_clothe(app.config['dsn'], product, clothe)
+    return redirect(url_for('home_page'))
+
+
 @app.route('/homemade_foods')
 def homemade_foods_page():
     #products = current_app.store.get_products()
@@ -196,8 +211,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='vagrant' password='vagrant'
-                                        host='localhost' port=5432 dbname='itucsdb'"""
+        app.config['dsn'] = """user='postgres' password='vagrant'
+                                        host='localhost' port=5432 dbname='database'"""
 
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    app.run(host='localhost', port=port, debug=debug)
 
