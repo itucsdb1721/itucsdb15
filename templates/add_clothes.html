@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block content %}
+  <form role="form" action="" method=post class="form-horizontal">
+    <h2>Please enter the informations about your product.</h2>
+      {{ "Enter the name of product." }}
+     <div class="control-group">
+        <div class="controls">
+          <input type="text" id="name" name="name" class="input-xlarge"
+            placeholder="i.e Kawaii Rabbit Socks" value="{{ request.form.name }}"
+            required>
+        </div>
+    </div>
+      {{ "Give a link for photo of your product." }}
+     <div class="control-group">
+        <div class="controls">
+          <input type="text" id="pic" name="pic" class="input-xlarge"
+            placeholder="link here" value="{{ request.form.pic }}"
+            required>
+        </div>
+    </div>
+      {{ "Enter the type of your clothe." }}
+    <div class="control-group">
+        <div class="controls">
+          <input type="text" id="type" name="type" class="input-xlarge"
+            placeholder="i.e Socks" value="{{ request.form.type }}"
+            required>
+        </div>
+    </div>
+    {{ "Enter the size of your clothe." }}
+    <div class="control-group">
+        <div class="controls">
+          <input type="text" id="size" name="size" class="input-xlarge"
+            placeholder="i.e S, M, L or 37, 38, 39" value="{{ request.form.size }}"
+            required>
+        </div>
+    </div>
+        {{ "Enter the material of the product" }}
+      <div class="control-group">
+        <div class="controls">
+          <input type="text" id="material" name="material" class="input-xlarge"
+            placeholder="i.e wool, cotton, silk" value="{{ request.form.material }}"
+            required>
+        </div>
+    </div>
+      {{ "Enter the price that you determine." }}
+      <div class="control-group">
+        <div class="controls">
+          <input type="text" id="price" name="price" class="input-xlarge"
+            placeholder="i.e $10" value="{{ request.form.price }}"
+            required>
+        </div>
+    </div>
+      {{ "Enter a description for your product if it is needed." }}
+      <div class="control-group">
+        <div class="controls">
+          <input type="text" id="description" name="description" class="input-xlarge"
+            placeholder=" " value="{{ request.form.description }}"
+            required>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-success">Add Product</button>
+        </div>
+    </div>
+  </form>
+{% endblock %}
