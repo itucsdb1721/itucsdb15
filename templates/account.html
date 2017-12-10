@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="list-group">
-            <a href="#" class="list-group-item">List My Products</a>
+            <a href="{{ url_for('list_products') }}" class="list-group-item">List My Products</a>
             <a href="#" class="list-group-item">List My Orders</a>
             <a href="#" class="list-group-item">List My Comments</a>
             <a href="{{ url_for('change_password') }}" class="list-group-item">Change Password</a>

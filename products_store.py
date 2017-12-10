@@ -56,7 +56,7 @@ class ProductStore:
     def get_product(conf, id):
         with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
-            query = "SELECT PNAME, PKIND, PRICE, USER_ID FROM PRODUCTS WHERE PRODUCT_ID = %d"
+            query = "SELECT PNAME, PKIND, USER_ID FROM PRODUCTS WHERE PRODUCT_ID = %d"
             cursor.execute(query, (id,))
             name, kind, price, seller = cursor.fetchone()
 
@@ -73,14 +73,20 @@ class ProductStore:
             # elif kind == "Knitting Work":
 
     # Same problem with update
-    def get_products(conf):
+    def get_products(conf, seller_id):
         with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
-            query = "SELECT PRODUCT_ID, PNAME, PKIND, PRICE, USER_ID FROM PRODUCTS ORDER BY PRODUCT_ID"
-            cursor.execute(query)
-            products = [(id, Product(name, kind, price, seller))
-                      for id, name, kind, price, seller in cursor]
+            query = "SELECT PRODUCT_ID, PNAME FROM PRODUCTS WHERE USER_ID = %s ORDER BY PRODUCT_ID"
+            cursor.execute(query, (seller_id,))
+            products = cursor.fetchall()
         return products
 
-
+    def get_product(conf, product_id):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query = "SELECT PNAME, PKIND, NICKNAME FROM PRODUCTS INNER JOIN USERS ON PRODUCTS.USER_ID = USERS.USER_ID WHERE PRODUCT_ID = %s"
+            cursor.execute(query, (product_id,))
+            (pname, pkind, seller) = cursor.fetchone()
+            product = Product(pname, pkind, seller)
+        return product
 

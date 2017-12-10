@@ -1,9 +1,7 @@
 class Product:
-    def __init__(self, name, pic_link, kind, price, seller):
+    def __init__(self, name, kind, seller):
         self.name = name
-        self.pic_link = pic_link
         self.kind = kind
-        self.price = price
         self.seller = seller
 
 class HomemadeFood(Product):
@@ -20,8 +18,10 @@ class WoodenCraft(Product):
         self.description = description
 
 class Clothes():
-    def __init__(self, type, size, material, description):
+    def __init__(self, pic_link, type, size, material, price, description):
+        self.pic_link = pic_link
         self.type = type
         self.size = size
         self.material = material
+        self.price = price
         self.description = description

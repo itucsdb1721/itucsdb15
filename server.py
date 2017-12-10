@@ -8,13 +8,14 @@ from flask import Flask, Blueprint, flash
 from flask import redirect, request, session
 from flask import render_template
 from flask.helpers import url_for
-from flask_login import LoginManager, login_user, logout_user, current_user
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from passlib.apps import custom_app_context as pwd_context
 from users import User, hashing
 from store import Store
 from products import *
 from clothes_store import ClotheStore
 from products_store import ProductStore
+from comment_store import CommentStore, Comment
 
 app = Flask(__name__)
 app.secret_key = 'helloworld'
@@ -33,14 +34,10 @@ lm = LoginManager()
 
 @lm.user_loader
 def load_user(user_id):
-    if Store.get_user(app.config['dsn'],user_id):
-        return Store.get_user(app.config['dsn'],user_id)
-    else:
-        return redirect(url_for('home_page'))
+    return Store.get_user(app.config['dsn'],user_id)
 
 @app.route('/')
 def home_page():
-    users = Store.get_users(app.config['dsn'])
     return render_template('index.html')
 
 
@@ -64,6 +61,8 @@ def initialize_database():
 
         query = """CREATE TABLE PRODUCTS (
                                          PRODUCT_ID SERIAL PRIMARY KEY,
+                                         PNAME CHARACTER(40),
+                                         PKIND VARCHAR(100) NOT NULL,
                                          USER_ID INTEGER NOT NULL REFERENCES USERS(USER_ID) ON DELETE CASCADE
                                          )"""
         cursor.execute(query)
@@ -72,46 +71,39 @@ def initialize_database():
                                           COMMENT_ID SERIAL PRIMARY KEY,
                                           USER_ID SERIAL REFERENCES USERS(USER_ID) ON DELETE CASCADE,
                                           PRODUCT_ID SERIAL REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
-                                          WRITE_DATE DATE NOT NULL,
                                           COMMENT VARCHAR(200) NOT NULL
                                           )"""
         cursor.execute(query)
 
         query = """CREATE TABLE HOMEMADE_FOOD (
                                  PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
+                                 PIC TEXT,
                                  QUANTITY REAL,
                                  FOOD_KIND VARCHAR(100) NOT NULL,
-                                 DESCRIPTION TEXT,
-                                 PIC TEXT,
-                                 PNAME CHARACTER(40),
-                                 PKIND VARCHAR(100) NOT NULL,
-                                 PRICE VARCHAR(10)
+                                 PRICE VARCHAR(10),
+                                 DESCRIPTION TEXT
                                  )"""
         cursor.execute(query)
 
         query = """CREATE TABLE CLOTHES (
                                          PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
+                                         PIC TEXT,
                                          CTYPE VARCHAR(50) NOT NULL,
                                          CSIZE VARCHAR(20) NOT NULL,
                                          MATERIAL VARCHAR(20) NOT NULL,
-                                         DESCRIPTION TEXT,
-                                         PIC TEXT,
-                                         PNAME CHARACTER(40),
-                                         PKIND VARCHAR(100) NOT NULL,
-                                         PRICE VARCHAR(10)
+                                         PRICE VARCHAR(10),
+                                         DESCRIPTION TEXT
                                          )"""
         cursor.execute(query)
 
         query = """CREATE TABLE WOODEN_CRAFT (
                                  PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
+                                 PIC TEXT,
                                  CSIZE INTEGER,
                                  COLOUR CHARACTER(40),
                                  CRAFT_KIND VARCHAR(100) NOT NULL,
-                                 DESCRIPTION TEXT,
-                                 PIC TEXT,
-                                 PNAME CHARACTER(40),
-                                 PKIND VARCHAR(100) NOT NULL,
-                                 PRICE VARCHAR(10)
+                                 PRICE VARCHAR(10),
+                                 DESCRIPTION TEXT
                                  )"""
         cursor.execute(query)
 
@@ -161,6 +153,12 @@ def logout_page():
 def account():
     return render_template('account.html')
 
+@app.route('/list_products')
+def list_products():
+    user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+    products = ProductStore.get_products(app.config['dsn'], user_id)
+    return render_template('list_users_product.html', products=products)
+
 @app.route('/change_password', methods=['GET', 'POST'])
 def change_password():
     if request.method == 'GET':
@@ -192,18 +190,42 @@ def delete_account():
         return render_template('delete_account.html', error = 'Wrong password.')
 
 @app.route('/add_clothes', methods=['GET', 'POST'])
+@login_required
 def add_clothes():
     if request.method == 'GET':
         return render_template('add_clothes.html')
     seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
-    product = Product(request.form['name'], request.form['pic'], "clothe",request.form['price'], seller_id)
-    clothe = Clothes(request.form['type'], request.form['size'], request.form['material'], request.form['description'])
+    product = Product(request.form['name'], "clothe", seller_id)
+    clothe = Clothes(request.form['pic'], request.form['type'], request.form['size'], request.form['material'], request.form['price'], request.form['description'])
     ClotheStore.add_clothe(app.config['dsn'], product, clothe)
     return redirect(url_for('home_page'))
 
+@app.route('/list_clothes', methods=['GET', 'POST'])
+def list_clothes():
+    if request.method == 'GET':
+        clothes = ClotheStore.get_clothes(app.config['dsn'])
+        return render_template('list_clothes.html', clothes = clothes)
+
+@app.route('/product_page=<int:product_id>', methods = ['GET', 'POST'])
+def product_page(product_id):
+    product = ProductStore.get_product(app.config['dsn'], product_id)
+    if (product.kind == "clothe"):
+        clothe = ClotheStore.get_clothe(app.config['dsn'], product_id)
+        if request.method == 'GET':
+            return render_template('clothe_page.html', product = product, clothe = clothe)
+        get_comment = request.form['user_comment']
+        if get_comment:
+            user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+            comment = Comment(user_id, product_id, get_comment)
+            CommentStore.add_comment(app.config['dsn'], comment)
+            return redirect(url_for('product_page', product_id = product_id))
+
+    else:
+        return render_template('list_users_product.html')
+
 
 @app.route('/add_homemade_foods', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def add_homemade_foods():
     if request.method == 'GET':
         return render_template('homemade_food_edit.html')
@@ -218,7 +240,7 @@ def add_homemade_foods():
 
 if __name__ == '__main__':
     lm.init_app(app)
-    lm.login_view = 'app.login'
+    lm.login_view = 'login'
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
     if VCAP_APP_PORT is not None:
         port, debug = int(VCAP_APP_PORT), False
@@ -229,8 +251,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='postgres' password='AkYoL9502'
-                                        host='localhost' port=5432 dbname='kermes_db'"""
+        app.config['dsn'] = """user='vagrant' password='vagrant'
+                                        host='localhost' port=5432 dbname='itucsdb1721'"""
 
     app.run(host='localhost', port=port, debug=debug)
 

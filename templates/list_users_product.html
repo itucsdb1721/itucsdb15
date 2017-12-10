@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Product List{% endblock %}
+{% block content %}
+      <div class="page-header">
+        <h1>{{ current_user.nickname }}'s Products</h1>
+      </div>
+      {% if products %}
+      <ul class="list-unstyled">
+        {% for product in products %}
+        <li>
+          <a href={{ url_for('product_page', product_id = product[0]) }} class="list-group-item">{{ product[1] }} - ({{ product[2] }})</a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+{% endblock %}

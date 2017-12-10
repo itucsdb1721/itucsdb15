@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block content %}
+    <!-- Page Content -->
+    <div class="container">
+
+      <div class="row">
+
+        <div class="col-lg-3">
+
+          <h1 class="my-4">Kermes</h1>
+            <p1>Add a Product</p1>
+          <div class="list-group">
+            <a href="{{ url_for('homemade_foods_page') }}" class="list-group-item">Organic Homemade Foods</a>
+            <a href="#" class="list-group-item">Wood Painting Stuff</a>
+              <a href="{{ url_for('add_clothes')}}" class="list-group-item">Clothes</a>
+          </div>
+
+        </div>
+        <!-- /.col-lg-3 -->
+
+          <div class="row">
+              {%  if clothes %}
+            {% for clothe in clothes %}
+
+              <div class="card h-100">
+
+                <a href="{{ url_for('product_page', product_id = clothe[0]) }}"><img class="card-img-top" src="{{ clothe[2] }}" style="width:257px;"></a>
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <a href="{{ url_for('product_page', product_id = clothe[0]) }}">{{ clothe[1] }}</a>
+                  </h4>
+                  <h5>${{ clothe[4] }}</h5>
+                  <p class="card-text">Seller: {{ clothe[3] }}</p>
+                </div>
+                <div class="card-footer">
+                </div>
+              </div>
+            </div>
+    {%  endfor %}
+    {%  endif %}
+
+          </div>
+          <!-- /.row -->
+
+      <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+    {% endblock %}

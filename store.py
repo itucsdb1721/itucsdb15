@@ -46,8 +46,7 @@ class Store:
             cursor = connection.cursor()
             query = "SELECT USER_ID, NM, SURNAME, NICKNAME, EMAIL, PASSWORD FROM USERS ORDER BY USER_ID"
             cursor.execute(query)
-            users = [(key, User(name, surname, nickname, email, password))
-                      for key, name, surname, nickname, email, password in cursor]
+            users = cursor.fetchall()
         return users
 
     def is_exist(conf, username):
