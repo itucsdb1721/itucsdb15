@@ -14,6 +14,7 @@ from users import User, hashing
 from store import Store
 from products import *
 from clothes_store import ClotheStore
+from products_store import ProductStore
 
 app = Flask(__name__)
 app.secret_key = 'helloworld'
@@ -63,10 +64,6 @@ def initialize_database():
 
         query = """CREATE TABLE PRODUCTS (
                                          PRODUCT_ID SERIAL PRIMARY KEY,
-                                         PIC TEXT,
-                                         PNAME CHARACTER(40),
-                                         PKIND VARCHAR(100) NOT NULL,
-                                         PRICE VARCHAR(10),
                                          USER_ID INTEGER NOT NULL REFERENCES USERS(USER_ID) ON DELETE CASCADE
                                          )"""
         cursor.execute(query)
@@ -84,7 +81,11 @@ def initialize_database():
                                  PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
                                  QUANTITY REAL,
                                  FOOD_KIND VARCHAR(100) NOT NULL,
-                                 DESCRIPTION TEXT
+                                 DESCRIPTION TEXT,
+                                 PIC TEXT,
+                                 PNAME CHARACTER(40),
+                                 PKIND VARCHAR(100) NOT NULL,
+                                 PRICE VARCHAR(10)
                                  )"""
         cursor.execute(query)
 
@@ -93,7 +94,11 @@ def initialize_database():
                                          CTYPE VARCHAR(50) NOT NULL,
                                          CSIZE VARCHAR(20) NOT NULL,
                                          MATERIAL VARCHAR(20) NOT NULL,
-                                         DESCRIPTION TEXT
+                                         DESCRIPTION TEXT,
+                                         PIC TEXT,
+                                         PNAME CHARACTER(40),
+                                         PKIND VARCHAR(100) NOT NULL,
+                                         PRICE VARCHAR(10)
                                          )"""
         cursor.execute(query)
 
@@ -102,7 +107,11 @@ def initialize_database():
                                  CSIZE INTEGER,
                                  COLOUR CHARACTER(40),
                                  CRAFT_KIND VARCHAR(100) NOT NULL,
-                                 DESCRIPTION TEXT
+                                 DESCRIPTION TEXT,
+                                 PIC TEXT,
+                                 PNAME CHARACTER(40),
+                                 PKIND VARCHAR(100) NOT NULL,
+                                 PRICE VARCHAR(10)
                                  )"""
         cursor.execute(query)
 
@@ -193,10 +202,19 @@ def add_clothes():
     return redirect(url_for('home_page'))
 
 
-@app.route('/homemade_foods')
-def homemade_foods_page():
-    #products = current_app.store.get_products()
-    return render_template('homemade_foods.html')#,products = sorted(products.items()))
+@app.route('/add_homemade_foods', methods=['GET', 'POST'])
+#@login_required
+def add_homemade_foods():
+    if request.method == 'GET':
+        return render_template('homemade_food_edit.html')
+
+    seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+
+    product = Product(request.form['name'], request.form['pic'], "homemade_food", request.form['price'], seller_id)
+    homemade_food = HomemadeFood(request.form['quantity'], request.form['food_kind'], request.form['description'])
+    ProductStore.add_product(app.config['dsn'], product, homemade_food)
+
+    return redirect(url_for('home_page'))
 
 if __name__ == '__main__':
     lm.init_app(app)
@@ -211,8 +229,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='postgres' password='vagrant'
-                                        host='localhost' port=5432 dbname='database'"""
+        app.config['dsn'] = """user='postgres' password='AkYoL9502'
+                                        host='localhost' port=5432 dbname='kermes_db'"""
 
     app.run(host='localhost', port=port, debug=debug)
 
