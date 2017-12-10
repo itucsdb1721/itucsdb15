@@ -6,13 +6,24 @@
       </div>
 
       {% if products %}
+          <form role="form" action="" method="post" name="homemade_foods"
+            class="form-horizontal">
       <ul class="list-unstyled">
         {% for product_id, product in products %}
         <li>
+            <input type="checkbox" name="product_ids" value="{{ product_id }}" />
+            <a href="{{ url_for('') }}">
+
           {{ product.name }}
-          {% if product.quantity %} ({{ product.quantity }}) {% endif %}
+          <!--{% if product.quantity %} ({{ product.quantity }}) {% endif %}-->
+            </a>
         </li>
         {% endfor %}
       </ul>
+
+          <button type="submit" name="delete"
+                class="btn btn-primary">Delete</button>
+      </form>
       {% endif %}
+
 {% endblock %}
