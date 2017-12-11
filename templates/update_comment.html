@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div id="Comments" class="tabcontent">
+    <form role="form" action="" method="post">
+    <textarea name="user_comment" id="comment" value= ""style="width:96%;height:100px;padding:2%;font-size:1.2em;">{{ old_comment }}</textarea>
+    <input type="submit" value="Save">
+    </form>
+{% endblock %}
