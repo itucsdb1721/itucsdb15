@@ -17,7 +17,7 @@ class FoodStore:
             for row in cursor:
                 product_id = row
 
-            query2 = """INSERT INTO HOMEMADE_FOOD (PRODUCT_ID, PIC, QUANTITY, FOOD_KIND, PRICE, DESCRIPTION) VALUES (%s, %s, %f, %s, %s, %s)"""
+            query2 = """INSERT INTO HOMEMADE_FOOD (PRODUCT_ID, PIC, QUANTITY, FOOD_KIND, PRICE, DESCRIPTION) VALUES (%s, %s, %s, %s, %s, %s)"""
             cursor.execute(query2, (product_id, foods.pic_link, foods.quantity, foods.food_kind, foods.price, foods.description))
             connection.commit()
 
