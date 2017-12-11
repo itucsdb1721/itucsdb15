@@ -79,7 +79,7 @@ def initialize_database():
         query = """CREATE TABLE HOMEMADE_FOOD (
                                  PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
                                  PIC TEXT,
-                                 QUANTITY REAL,
+                                 QUANTITY NUMBER,
                                  FOOD_KIND VARCHAR(100) NOT NULL,
                                  PRICE VARCHAR(10),
                                  DESCRIPTION TEXT
@@ -234,7 +234,7 @@ def add_homemade_foods():
     seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
 
     product = Product(request.form['name'], "homemade_food", seller_id)
-    homemade_food = HomemadeFood(request.form['pic_link'], request.form['quantity'], request.form['food_kind'], request.form['price'], request.form['description'])
+    homemade_food = HomemadeFood(request.form['pic'], request.form['quantity'], request.form['kind'], request.form['price'], request.form['description'])
     FoodStore.add_food(app.config['dsn'], product, homemade_food)
 
     return redirect(url_for('home_page'))
