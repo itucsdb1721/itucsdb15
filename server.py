@@ -234,7 +234,7 @@ def add_homemade_foods():
     seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
 
     product = Product(request.form['name'], "homemade_food", seller_id)
-    homemade_food = HomemadeFood(request.form['pic'], request.form['quantity'], request.form['kind'], request.form['price'], request.form['description'])
+    homemade_food = HomemadeFood(request.form['pic'], request.form['quantity'], request.form['food_kind'], request.form['price'], request.form['description'])
     FoodStore.add_food(app.config['dsn'], product, homemade_food)
 
     return redirect(url_for('home_page'))
@@ -252,8 +252,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='postgres' password='AkYoL9502'
-                                        host='localhost' port=5432 dbname='kermes_db'"""
+        app.config['dsn'] = """user='postgres' password='vagrant'
+                                        host='localhost' port=5432 dbname='database'"""
 
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    app.run(host='localhost', port=port, debug=debug)
 
