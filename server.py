@@ -79,7 +79,7 @@ def initialize_database():
         query = """CREATE TABLE HOMEMADE_FOOD (
                                  PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
                                  PIC TEXT,
-                                 QUANTITY NUMBER,
+                                 QUANTITY TEXT,
                                  FOOD_KIND VARCHAR(100) NOT NULL,
                                  PRICE VARCHAR(10),
                                  DESCRIPTION TEXT
@@ -100,7 +100,7 @@ def initialize_database():
         query = """CREATE TABLE WOODEN_CRAFT (
                                  PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
                                  PIC TEXT,
-                                 CSIZE INTEGER,
+                                 CSIZE TEXT,
                                  COLOUR CHARACTER(40),
                                  CRAFT_KIND VARCHAR(100) NOT NULL,
                                  PRICE VARCHAR(10),
