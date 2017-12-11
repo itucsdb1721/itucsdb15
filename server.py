@@ -16,6 +16,7 @@ from products import *
 from clothes_store import ClotheStore
 from products_store import ProductStore
 from comment_store import CommentStore, Comment
+from foods_store import FoodStore
 
 app = Flask(__name__)
 app.secret_key = 'helloworld'
@@ -211,8 +212,9 @@ def product_page(product_id):
     product = ProductStore.get_product(app.config['dsn'], product_id)
     if (product.kind == "clothe"):
         clothe = ClotheStore.get_clothe(app.config['dsn'], product_id)
+        comments = CommentStore.get_comment_for_product(app.config['dsn'], product_id)
         if request.method == 'GET':
-            return render_template('clothe_page.html', product = product, clothe = clothe)
+            return render_template('clothe_page.html', product = product, clothe = clothe, comments = comments, product_id = product_id)
         get_comment = request.form['user_comment']
         if get_comment:
             user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
@@ -223,6 +225,23 @@ def product_page(product_id):
     else:
         return render_template('list_users_product.html')
 
+@app.route('/delete_comment=<int:comment_id>=<int:product_id>')
+def delete_comment(comment_id, product_id):
+    CommentStore.delete_comment(app.config['dsn'], comment_id)
+    return redirect(url_for('product_page', product_id = product_id))
+
+@app.route('/update_comment=<int:comment_id>=<int:product_id>=<string:old_comment>', methods = ['GET', 'POST'])
+def update_comment(comment_id, old_comment, product_id):
+    if request.method == 'GET':
+        return render_template('update_comment.html', old_comment = old_comment)
+    new_comment = request.form['user_comment']
+    CommentStore.update_comment(app.config['dsn'], comment_id, new_comment)
+    return redirect(url_for('product_page', product_id=product_id))
+
+@app.route('/delete_product=<int:product_id>')
+def delete_product(product_id):
+    ProductStore.delete_product(app.config['dsn'], product_id)
+    return render_template('list_users_product.html')
 
 @app.route('/add_homemade_foods', methods=['GET', 'POST'])
 @login_required
@@ -232,9 +251,9 @@ def add_homemade_foods():
 
     seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
 
-    product = Product(request.form['name'], request.form['pic'], "homemade_food", request.form['price'], seller_id)
-    homemade_food = HomemadeFood(request.form['quantity'], request.form['food_kind'], request.form['description'])
-    ProductStore.add_product(app.config['dsn'], product, homemade_food)
+    product = Product(request.form['name'], "homemade_food", seller_id)
+    homemade_food = HomemadeFood(request.form['pic'], request.form['quantity'], request.form['food_kind'], request.form['price'], request.form['description'])
+    FoodStore.add_food(app.config['dsn'], product, homemade_food)
 
     return redirect(url_for('home_page'))
 
@@ -251,8 +270,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='postgres' password='AkYoL9502'
-                                        host='localhost' port=5432 dbname='kermes_db'"""
+        app.config['dsn'] = """user='postgres' password='vagrant'
+                                        host='localhost' port=5432 dbname='database'"""
 
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    app.run(host='localhost', port=port, debug=debug)
 

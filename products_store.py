@@ -90,3 +90,10 @@ class ProductStore:
             product = Product(pname, pkind, seller)
         return product
 
+    def delete_product(conf, key):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query = "DELETE FROM PRODUCTS WHERE (PRODUCT_ID = %s)"
+            cursor.execute(query, (key,))
+            connection.commit()
+

@@ -16,7 +16,7 @@ class CommentStore:
             cursor.execute(query, (key,))
             connection.commit()
 
-    def update_password(conf, comment_id, newcomment):
+    def update_comment(conf, comment_id, newcomment):
         with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
             query = "UPDATE COMMENTS SET COMMENT = %s WHERE (COMMENT_ID = %s)"
@@ -26,7 +26,7 @@ class CommentStore:
     def get_comment_for_product(conf, product_id):
         with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
-            query = "SELECT NICKNAME, COMMENT FROM COMMENTS INNER JOIN USERS ON COMMENTS.USER_ID = USERS.USER_ID WHERE PRODUCT_ID = %s"
+            query = "SELECT NICKNAME, COMMENT, COMMENT_ID FROM COMMENTS INNER JOIN USERS ON COMMENTS.USER_ID = USERS.USER_ID WHERE PRODUCT_ID = %s ORDER BY COMMENT_ID DESC"
             cursor.execute(query, (product_id,))
             comments = cursor.fetchall()
             return comments

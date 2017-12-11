@@ -70,9 +70,24 @@ div.tab button.active {
 </div>
 
 <div id="Comments" class="tabcontent">
- <p><form role="form" action="" method=post class="form-horizontal">
- <textarea id="comment" name="user_comment"></textarea>
-      <button type="Submit Comment">Send</button>
+<form role="form" action="" method="post">
+<textarea name="user_comment" id="comment" style="width:96%;height:100px;padding:2%;font-size:1.2em;">
+</textarea>
+<input type="submit" value="Submit">
+</form>
+
+    {% if comments %}
+      <ul class="list-group">
+        {% for comment in comments %}
+        <li>
+            <p class="list-group-item" > <b>{{ comment[0] }}:</b> {{ comment[1] }}
+                {% if comment[0] == current_user.nickname %}
+                    <a href="{{ url_for('update_comment', comment_id = comment[2], old_comment = comment[1], product_id = product_id) }}">Edit</a>
+                    <a href="{{ url_for('delete_comment', comment_id = comment[2], new_comment=new_comment, product_id = product_id) }}" onclick="myFunction()">Delete </a>{% endif %}</p>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
 </form></p>
 </div>
 
@@ -89,6 +104,10 @@ function openCity(evt, cityName) {
     }
     document.getElementById(cityName).style.display = "block";
     evt.currentTarget.className += " active";
+}
+
+function myFunction() {
+    confirm("Are you sure about deleting your comment?");
 }
 </script>
 {% endblock %}
