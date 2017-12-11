@@ -14,8 +14,9 @@ from users import User, hashing
 from store import Store
 from products import *
 from clothes_store import ClotheStore
-from products_store import ProductStore
+from foods_store import FoodStore
 from comment_store import CommentStore, Comment
+from products_store import ProductStore
 
 app = Flask(__name__)
 app.secret_key = 'helloworld'
@@ -232,9 +233,9 @@ def add_homemade_foods():
 
     seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
 
-    product = Product(request.form['name'], request.form['pic'], "homemade_food", request.form['price'], seller_id)
-    homemade_food = HomemadeFood(request.form['quantity'], request.form['food_kind'], request.form['description'])
-    ProductStore.add_product(app.config['dsn'], product, homemade_food)
+    product = Product(request.form['name'], "homemade_food", seller_id)
+    homemade_food = HomemadeFood(request.form['pic_link'], request.form['quantity'], request.form['food_kind'], request.form['price'], request.form['description'])
+    FoodStore.add_food(app.config['dsn'], product, homemade_food)
 
     return redirect(url_for('home_page'))
 
