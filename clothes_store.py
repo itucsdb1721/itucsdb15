@@ -36,28 +36,12 @@ class ClotheStore:
             clothes = cursor.fetchall()
         return clothes
 
-"""
-    def delete_clothe(conf, key):
+    def update_clothe(conf, product_id, new_clothe):
         with dbapi2.connect(conf) as connection:
             cursor = connection.cursor()
-            query = "DELETE FROM PRODUCTS WHERE (PRODUCT_ID = %s)"
-            cursor.execute(query, (key,))
+            query = "UPDATE CLOTHES SET PIC = %s, CTYPE = %s, CSIZE = %s, MATERIAL = %s, PRICE = %s, DESCRIPTION = %s WHERE (PRODUCT_ID = %s)"
+            cursor.execute(query, (new_clothe.pic_link, new_clothe.type, new_clothe.size, new_clothe.material, new_clothe.price, new_clothe.description, product_id))
             connection.commit()
 
-    def update_password(conf, username, new_password):
-        with dbapi2.connect(conf) as connection:
-            cursor = connection.cursor()
-            query = "UPDATE USERS SET PASSWORD = %s WHERE (NICKNAME = %s)"
-            cursor.execute(query, (new_password, username))
-            connection.commit()
 
-    def get_user(conf, username):
-        with dbapi2.connect(conf) as connection:
-            cursor = connection.cursor()
-            query = "SELECT NM, SURNAME, NICKNAME, EMAIL, PASSWORD FROM USERS WHERE NICKNAME = %s"
-            cursor.execute(query, (username,))
-            for row in cursor:
-                (name, surname, nickname, email, password) = row
-                return User(name, surname, nickname, email, password)
-"""
 

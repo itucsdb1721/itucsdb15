@@ -243,6 +243,21 @@ def delete_product(product_id):
     ProductStore.delete_product(app.config['dsn'], product_id)
     return render_template('list_users_product.html')
 
+@app.route('/update_product=<int:product_id>', methods=['GET', 'POST'])
+def update_product(product_id):
+    product = ProductStore.get_product(app.config['dsn'], product_id)
+    if product.kind == 'clothe':
+        clothe = ClotheStore.get_clothe(app.config['dsn'], product_id)
+        if request.method == 'GET':
+            return render_template('update_clothe.html', productname=product.name, clothe = clothe)
+        new_clothe = Clothes(request.form['pic'], request.form['type'], request.form['size'], request.form['material'], request.form['price'], request.form['description'])
+        new_name = request.form['name']
+        ClotheStore.update_clothe(app.config['dsn'], product_id, new_clothe)
+        ProductStore.update_name(app.config['dsn'], product_id, new_name)
+        return render_template('list_users_product.html')
+
+    return render_template('list_users_product.html')
+
 @app.route('/add_homemade_foods', methods=['GET', 'POST'])
 @login_required
 def add_homemade_foods():
@@ -273,5 +288,5 @@ if __name__ == '__main__':
         app.config['dsn'] = """user='vagrant' password='vagrant'
                                         host='localhost' port=5432 dbname='itucsdb'"""
 
-    app.run(host='localhost', port=port, debug=debug)
+    app.run(host='0.0.0.0', port=port, debug=debug)
 

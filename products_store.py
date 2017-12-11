@@ -97,3 +97,10 @@ class ProductStore:
             cursor.execute(query, (key,))
             connection.commit()
 
+    def update_name(conf, product_id, new_name):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query = "UPDATE PRODUCTS SET PNAME = %s WHERE (PRODUCT_ID = %s)"
+            cursor.execute(query, (new_name, product_id))
+            connection.commit()
+

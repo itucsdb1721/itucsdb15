@@ -2,15 +2,13 @@
 {% block title %}Product List{% endblock %}
 {% block content %}
       <div class="page-header">
-        <h1>{{ current_user.nickname }}'s Products</h1>
+        <h1 style = "padding:1%">{{ current_user.nickname }}'s Products</h1>
       </div>
       {% if products %}
       <ul class="list-unstyled">
         {% for product in products %}
         <li>
-          <a href={{ url_for('product_page', product_id = product[0]) }} class="list-group-item">{{ product[1] }} - (<a href="{{ url_for('update_product', product_id = product_id) }}">Update</a>
-                              <a href="{{ url_for('delete_product', product_id = product[0]) }}" onclick="myFunction()">Delete </a></p>
-)</a>
+           <div class="list-group-item"> <a href={{ url_for('product_page', product_id = product[0]) }}>{{ product[1] }}</a>  ---  <a href="{{ url_for('update_product', product_id = product[0]) }}">Update</a>  /  <a href="{{ url_for('delete_product', product_id = product[0]) }}" onclick="myFunction()">Delete </a></div>
         </li>
         {% endfor %}
       </ul>
