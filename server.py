@@ -294,7 +294,7 @@ def update_product(product_id):
         new_name = request.form['name']
         ClotheStore.update_clothe(app.config['dsn'], product_id, new_clothe)
         ProductStore.update_name(app.config['dsn'], product_id, new_name)
-        return render_template('list_users_product.html')
+        return redirect(url_for('list_products'))
 
     elif product.kind == 'homemade_food':
         homemade_food = FoodStore.get_food(app.config['dsn'], product_id)
@@ -304,7 +304,7 @@ def update_product(product_id):
         new_name = request.form['name']
         FoodStore.update_food(app.config['dsn'], product_id, new_food)
         ProductStore.update_name(app.config['dsn'], product_id, new_name)
-        return render_template('list_users_product.html')
+        return redirect(url_for('list_products'))
 
     elif product.kind == 'wooden_craft':
         wooden_craft = WoodStore.get_woodencraft(app.config['dsn'], product_id)
@@ -315,7 +315,7 @@ def update_product(product_id):
         new_name = request.form['name']
         WoodStore.update_woodencraft(app.config['dsn'], product_id, new_craft)
         ProductStore.update_name(app.config['dsn'], product_id, new_name)
-        return render_template('list_users_product.html')
+        return redirect(url_for('list_products'))
 
     elif product.kind == 'accessory':
         accessory = AccessoryStore.get_accessory(app.config['dsn'], product_id)
@@ -327,9 +327,9 @@ def update_product(product_id):
         new_name = request.form['name']
         AccessoryStore.update_accessory(app.config['dsn'], product_id, new_accessory)
         ProductStore.update_name(app.config['dsn'], product_id, new_name)
-        return render_template('list_users_product.html')
+        return redirect(url_for('list_products'))
 
-    return render_template('list_users_product.html')
+    return redirect(url_for('list_products'))
 
 @app.route('/add_homemade_foods', methods=['GET', 'POST'])
 @login_required
