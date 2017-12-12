@@ -11,14 +11,6 @@ class ProductStore:
             query = """INSERT INTO PRODUCTS (PNAME, PKIND, PRICE, USER_ID) VALUES (%s, %s, %f, %d)"""
             cursor.execute(query, (Product.name, Product.kind, Product.price, Product.seller))
 
-            if products.kind == "Homemade Food":
-                query = """INSERT INTO HOMEMADE_FOOD (QUANTITY, FOOD_KIND, DESCRIPTION) VALUES (%f, %s, %s)"""
-                cursor.execute(query, (HomemadeFood.quantity, HomemadeFood.food_kind, HomemadeFood.description))
-            elif products.kind == "Wooden Craft":
-                query = """INSERT INTO WOODEN_CRAFT (CSIZE, COLOUR, CRAFT_KIND, DESCRIPTION) VALUES (%s, %s, %s, %s)"""
-                cursor.execute(query, (WoodenCraft.size, WoodenCraft.colour, WoodenCraft.craft_kind, WoodenCraft.description))
-            #elif products.kind == "Knitting Work":
-
             connection.commit()
 
     def delete_product(conf, id, kind):
@@ -27,14 +19,7 @@ class ProductStore:
             query = "DELETE FROM PRODUCTS WHERE (PRODUCT_ID = %d)"
             cursor.execute(query, (id,))
 
-            if kind == "Homemade Food":
-                query = "DELETE FROM HOMEMADE_FOOD WHERE (PRODUCT_ID = %d)"
-                cursor.execute(query, (id,))
-            elif kind == "Wooden Craft":
-                query = "DELETE FROM WOODEN_CRAFT WHERE (PRODUCT_ID = %d)"
-                cursor.execute(query, (id,))
-
-        connection.commit()
+            connection.commit()
 
     #How additional attributes can be added???
     def update_product(conf, key, name, kind, price, seller):
@@ -42,14 +27,6 @@ class ProductStore:
             cursor = connection.cursor()
             query = "UPDATE PRODUCTS SET PNAME = %s, PKIND = %s, PRICE = %f, USER_ID = %d WHERE (PRODUCT_ID = %d)"
             cursor.execute(query, (name, kind, price, seller, key))
-
-            if kind == "Homemade Food":
-                query = """UPDATE HOMEMADE_FOOD SET QUANTITY = %f, FOOD_KIND = %s, DESCRIPTION = %s WHERE (PRODUCT_ID = %d)"""
-                cursor.execute(query, (HomemadeFood.quantity, HomemadeFood.food_kind, HomemadeFood.description))
-            elif kind == "Wooden Craft":
-                query = """UPDATE WOODEN_CRAFT SET CSIZE = %d, COLOUR = %s, CRAFT_KIND = %s, DESCRIPTION = %s WHERE (PRODUCT_ID = %d)"""
-                cursor.execute(query, (WoodenCraft.size, WoodenCraft.colour, WoodenCraft.craft_kind, WoodenCraft.description))
-            # elif kind == "Knitting Work":
 
             connection.commit()
 

@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block content %}
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-3">
+
+                <h1 class="my-4">Kermes</h1>
+                <p1>Add a Product</p1>
+                <div class="list-group">
+                    <a href="{{ url_for('add_homemade_foods') }}" class="list-group-item">Organic Homemade Foods</a>
+                    <a href="{{ url_for('add_wooden_crafts') }}" class="list-group-item">Wooden Crafts</a>
+                    <a href="{{ url_for('add_clothes') }}" class="list-group-item">Clothes</a>
+                    <a href="{{ url_for('add_accessories') }}" class="list-group-item">Accessories</a>
+                </div>
+
+            </div>
+            <!-- /.col-lg-3 -->
+
+            <div class="row">
+                {% if accessories %}
+                    {% for accessory in accessories %}
+
+                        <div class="card h-100">
+
+                            <a href="{{ url_for('product_page', product_id = accessory[0]) }}"><img class="card-img-top"
+                                                                                                    src="{{ accessory[2] }}"
+                                                                                                    style="width:257px;"></a>
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="{{ url_for('product_page', product_id = accessory[0]) }}">{{ accessory[1] }}</a>
+                                </h4>
+                                <h5>${{ accessory[4] }}</h5>
+                                <p class="card-text">Seller: {{ accessory[3] }}</p>
+                            </div>
+                            <div class="card-footer">
+                            </div>
+                        </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+        </div>
+        <!-- /.row -->
+
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+{% endblock %}

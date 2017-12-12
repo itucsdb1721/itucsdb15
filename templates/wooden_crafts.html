@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+{% block content %}
+    <head>
+    <style>
+/* Style the tab */
+div.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+div.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+div.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+div.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+        .info {
+    -webkit-column-count: 2; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;
+}
+</style>
+</head>
+<body>
+<a href="{{ wooden_craft.pic }}"><img class="" src="{{ wooden_craft.pic }}" style="width:250px;"></a>
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'Info')">Info</button>
+  <button class="tablinks" onclick="openCity(event, 'Description')">Description</button>
+  <button class="tablinks" onclick="openCity(event, 'Comments')">Comments</button>
+</div>
+
+<div id="Info" class="tabcontent">
+
+  <h3>{{ product.name }}</h3>
+  <p>Seller: {{ product.seller }}</p>
+    <p>Category: {{ product.kind }}</p>
+<p>Size: {{ wooden_craft.size }}</p>
+    <p>Colour: {{ wooden_craft.colour }}</p>
+    <p>Kind: {{ wooden_craft.craft_kind }}</p>
+<h4>Price: ${{ wooden_craft.price }}</h4>
+
+</div>
+
+<div id="Description" class="tabcontent">
+  <p>{{ wooden_craft.description }}</p>
+</div>
+
+<div id="Comments" class="tabcontent">
+<form role="form" action="" method="post">
+<textarea name="user_comment" id="comment" style="width:96%;height:100px;padding:2%;font-size:1.2em;">
+</textarea>
+<input type="submit" value="Submit">
+</form>
+
+    {% if comments %}
+      <ul class="list-group">
+        {% for comment in comments %}
+        <li>
+            <p class="list-group-item" > <b>{{ comment[0] }}:</b> {{ comment[1] }}
+                {% if comment[0] == current_user.nickname %}
+                    <a href="{{ url_for('update_comment', comment_id = comment[2], old_comment = comment[1], product_id = product_id) }}">Edit</a>
+                    <a href="{{ url_for('delete_comment', comment_id = comment[2], new_comment=new_comment, product_id = product_id) }}" onclick="myFunction()">Delete </a>{% endif %}</p>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+</form></p>
+</div>
+
+<script>
+function openCity(evt, cityName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+function myFunction() {
+    confirm("Are you sure about deleting your comment?");
+}
+</script>
+{% endblock %}

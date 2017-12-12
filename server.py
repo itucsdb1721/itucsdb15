@@ -17,6 +17,8 @@ from clothes_store import ClotheStore
 from products_store import ProductStore
 from comment_store import CommentStore, Comment
 from foods_store import FoodStore
+from wood_store import WoodStore
+from accessory_store import AccessoryStore
 
 app = Flask(__name__)
 app.secret_key = 'helloworld'
@@ -64,7 +66,7 @@ def initialize_database():
                                          PRODUCT_ID SERIAL PRIMARY KEY,
                                          PNAME CHARACTER(40),
                                          PKIND VARCHAR(100) NOT NULL,
-                                         USER_ID INTEGER NOT NULL REFERENCES USERS(USER_ID) ON DELETE CASCADE
+                                         USER_ID SERIAL REFERENCES USERS(USER_ID) ON DELETE CASCADE
                                          )"""
         cursor.execute(query)
 
@@ -79,7 +81,7 @@ def initialize_database():
         query = """CREATE TABLE HOMEMADE_FOOD (
                                  PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
                                  PIC TEXT,
-                                 QUANTITY REAL,
+                                 QUANTITY TEXT,
                                  FOOD_KIND VARCHAR(100) NOT NULL,
                                  PRICE VARCHAR(10),
                                  DESCRIPTION TEXT
@@ -100,7 +102,7 @@ def initialize_database():
         query = """CREATE TABLE WOODEN_CRAFT (
                                  PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
                                  PIC TEXT,
-                                 CSIZE INTEGER,
+                                 CSIZE TEXT,
                                  COLOUR CHARACTER(40),
                                  CRAFT_KIND VARCHAR(100) NOT NULL,
                                  PRICE VARCHAR(10),
@@ -108,6 +110,15 @@ def initialize_database():
                                  )"""
         cursor.execute(query)
 
+        query = """CREATE TABLE ACCESSORY (
+                                         PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
+                                         PIC TEXT,
+                                         COLOUR CHARACTER(40),
+                                         KIND VARCHAR(100) NOT NULL,
+                                         PRICE VARCHAR(10),
+                                         DESCRIPTION TEXT
+                                         )"""
+        cursor.execute(query)
         connection.commit()
 
     return redirect(url_for('home_page'))
@@ -221,7 +232,36 @@ def product_page(product_id):
             comment = Comment(user_id, product_id, get_comment)
             CommentStore.add_comment(app.config['dsn'], comment)
             return redirect(url_for('product_page', product_id = product_id))
-
+    elif (product.kind == "homemade_food"):
+        homemade_food = FoodStore.get_food(app.config['dsn'], product_id)
+        if request.method == 'GET':
+            return render_template('homemade_foods.html', product=product, homemade_food = homemade_food, product_id = product_id)
+        get_comment = request.form['user_comment']
+        if get_comment:
+            user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+            comment = Comment(user_id, product_id, get_comment)
+            CommentStore.add_comment(app.config['dsn'], comment)
+            return redirect(url_for('product_page', product_id=product_id))
+    elif (product.kind == "wooden_craft"):
+        wooden_craft = WoodStore.get_woodencraft(app.config['dsn'], product_id)
+        if request.method == 'GET':
+            return render_template('wooden_crafts.html', product=product, wooden_craft=wooden_craft)
+        get_comment = request.form['user_comment']
+        if get_comment:
+            user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+            comment = Comment(user_id, product_id, get_comment)
+            CommentStore.add_comment(app.config['dsn'], comment)
+            return redirect(url_for('product_page', product_id=product_id))
+    elif (product.kind == "accessory"):
+        accessory = AccessoryStore.get_accessory(app.config['dsn'], product_id)
+        if request.method == 'GET':
+            return render_template('accessory_page.html', product=product, accessory=accessory)
+        get_comment = request.form['user_comment']
+        if get_comment:
+            user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+            comment = Comment(user_id, product_id, get_comment)
+            CommentStore.add_comment(app.config['dsn'], comment)
+            return redirect(url_for('product_page', product_id=product_id))
     else:
         return render_template('list_users_product.html')
 
@@ -256,6 +296,39 @@ def update_product(product_id):
         ProductStore.update_name(app.config['dsn'], product_id, new_name)
         return render_template('list_users_product.html')
 
+    elif product.kind == 'homemade_food':
+        homemade_food = FoodStore.get_food(app.config['dsn'], product_id)
+        if request.method == 'GET':
+            return render_template('update_food.html', productname=product.name, homemade_food=homemade_food)
+        new_food = HomemadeFood(request.form['pic'], request.form['quantity'], request.form['food_kind'], request.form['price'], request.form['description'])
+        new_name = request.form['name']
+        FoodStore.update_food(app.config['dsn'], product_id, new_food)
+        ProductStore.update_name(app.config['dsn'], product_id, new_name)
+        return render_template('list_users_product.html')
+
+    elif product.kind == 'wooden_craft':
+        wooden_craft = WoodStore.get_woodencraft(app.config['dsn'], product_id)
+        if request.method == 'GET':
+            return render_template('update_craft.html', productname=product.name, wooden_craft=wooden_craft)
+
+        new_craft = WoodenCraft(request.form['pic'], request.form['size'], request.form['colour'], request.form['craft_kind'], request.form['price'], request.form['description'])
+        new_name = request.form['name']
+        WoodStore.update_woodencraft(app.config['dsn'], product_id, new_craft)
+        ProductStore.update_name(app.config['dsn'], product_id, new_name)
+        return render_template('list_users_product.html')
+
+    elif product.kind == 'accessory':
+        accessory = AccessoryStore.get_accessory(app.config['dsn'], product_id)
+        if request.method == 'GET':
+            return render_template('update_accessory.html', productname=product.name, accessory=accessory)
+
+        new_accessory = Accessory(request.form['pic'], request.form['colour'],
+                                request.form['kind'], request.form['price'], request.form['description'])
+        new_name = request.form['name']
+        AccessoryStore.update_accessory(app.config['dsn'], product_id, new_accessory)
+        ProductStore.update_name(app.config['dsn'], product_id, new_name)
+        return render_template('list_users_product.html')
+
     return render_template('list_users_product.html')
 
 @app.route('/add_homemade_foods', methods=['GET', 'POST'])
@@ -272,6 +345,52 @@ def add_homemade_foods():
 
     return redirect(url_for('home_page'))
 
+@app.route('/list_foods', methods=['GET', 'POST'])
+def list_foods():
+    if request.method == 'GET':
+        homemade_food = FoodStore.get_foods(app.config['dsn'])
+        return render_template('list_foods.html', homemade_food = homemade_food)
+
+@app.route('/add_wooden_crafts', methods=['GET', 'POST'])
+@login_required
+def add_wooden_crafts():
+    if request.method == 'GET':
+        return render_template('add_woodencraft.html')
+
+    seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+
+    product = Product(request.form['name'], "wooden_craft", seller_id)
+    wooden_craft = WoodenCraft(request.form['pic'], request.form['size'], request.form['colour'], request.form['craft_kind'], request.form['price'], request.form['description'])
+    WoodStore.add_woodencraft(app.config['dsn'], product, wooden_craft)
+
+    return redirect(url_for('home_page'))
+
+@app.route('/list_wooden_crafts', methods=['GET', 'POST'])
+def list_wooden_crafts():
+    if request.method == 'GET':
+        wooden_craft = WoodStore.get_woodencrafts(app.config['dsn'])
+        return render_template('list_wooden_crafts.html', wooden_craft = wooden_craft)
+
+@app.route('/add_accessories', methods=['GET', 'POST'])
+@login_required
+def add_accessories():
+    if request.method == 'GET':
+        return render_template('add_accessories.html')
+
+    seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+
+    product = Product(request.form['name'], "accessory", seller_id)
+    accessory = Accessory(request.form['pic'], request.form['colour'], request.form['kind'], request.form['price'], request.form['description'])
+    AccessoryStore.add_accessory(app.config['dsn'], product, accessory)
+
+    return redirect(url_for('home_page'))
+
+@app.route('/list_accessories', methods=['GET', 'POST'])
+def list_accessories():
+    if request.method == 'GET':
+        accessory = AccessoryStore.get_accessories(app.config['dsn'])
+        return render_template('list_foods.html', accessory = accessory)
+
 if __name__ == '__main__':
     lm.init_app(app)
     lm.login_view = 'login'
@@ -285,8 +404,8 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='vagrant' password='vagrant'
-                                        host='localhost' port=5432 dbname='itucsdb'"""
+        app.config['dsn'] = """user='postgres' password='AkYoL9502'
+                                        host='localhost' port=5432 dbname='kermes_db'"""
 
     app.run(host='0.0.0.0', port=port, debug=debug)
 

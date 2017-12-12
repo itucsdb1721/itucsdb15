@@ -47,7 +47,7 @@
         </style>
     </head>
     <body>
-    <a href="{{ homemade_food.pic }}"><img class="" src="{{ homemade_food.pic }}" style="width:250px;"></a>
+    <a href="{{ accessory.pic }}"><img class="" src="{{ accessory.pic }}" style="width:250px;"></a>
     <div class="tab">
         <button class="tablinks" onclick="openCity(event, 'Info')">Info</button>
         <button class="tablinks" onclick="openCity(event, 'Description')">Description</button>
@@ -59,14 +59,14 @@
         <h3>{{ product.name }}</h3>
         <p>Seller: {{ product.seller }}</p>
         <p>Category: {{ product.kind }}</p>
-        <p>Kind: {{ homemade_food.food_kind }}</p>
-        <p>Quantity: {{ homemade_food.quantity }}</p>
-        <h4>Price: ${{ homemade_food.price }}</h4>
+        <p>Colour: {{ accessory.colour }}</p>
+        <p>Kind: {{ accessory.kind }}</p>
+        <h4>Price: ${{ accessory.price }}</h4>
 
     </div>
 
     <div id="Description" class="tabcontent">
-        <p>{{ homemade_food.description }}</p>
+        <p>{{ accessory.description }}</p>
     </div>
 
     <div id="Comments" class="tabcontent">
