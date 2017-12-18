@@ -348,8 +348,8 @@ def add_homemade_foods():
 @app.route('/list_foods', methods=['GET', 'POST'])
 def list_foods():
     if request.method == 'GET':
-        homemade_food = FoodStore.get_foods(app.config['dsn'])
-        return render_template('list_foods.html', homemade_food = homemade_food)
+        foods = FoodStore.get_foods(app.config['dsn'])
+        return render_template('list_foods.html', foods = foods)
 
 @app.route('/add_wooden_crafts', methods=['GET', 'POST'])
 @login_required
@@ -368,8 +368,8 @@ def add_wooden_crafts():
 @app.route('/list_wooden_crafts', methods=['GET', 'POST'])
 def list_wooden_crafts():
     if request.method == 'GET':
-        wooden_craft = WoodStore.get_woodencrafts(app.config['dsn'])
-        return render_template('list_wooden_crafts.html', wooden_craft = wooden_craft)
+        wooden_crafts = WoodStore.get_woodencrafts(app.config['dsn'])
+        return render_template('list_wooden_crafts.html', wooden_crafts = wooden_crafts)
 
 @app.route('/add_accessories', methods=['GET', 'POST'])
 @login_required
@@ -388,8 +388,8 @@ def add_accessories():
 @app.route('/list_accessories', methods=['GET', 'POST'])
 def list_accessories():
     if request.method == 'GET':
-        accessory = AccessoryStore.get_accessories(app.config['dsn'])
-        return render_template('list_foods.html', accessory = accessory)
+        accessories = AccessoryStore.get_accessories(app.config['dsn'])
+        return render_template('list_accessory.html', accessories = accessories)
 
 if __name__ == '__main__':
     lm.init_app(app)
