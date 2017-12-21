@@ -1,8 +1,7 @@
 User Guide
 ==========
 
-**explain how your application works from the user perspective, use
-screenshots whereever appropriate**
+In this part, we will briefly tell to users how to use Kermes. There exists one user type in this system. 
 
 **to add a picture, use the following example**::
 
