@@ -14,8 +14,7 @@ Homemade foods can be added to the website via "Homemade Foods" button in the na
       :scale: 75 %
       :align: center
       :alt: 1
-      
-      Figure 1.1 
+ Figure 1.1 
 
 Figure 1.1 is a screenshot of the home page which shows the add button for Homemade Foods in the navigation bar.
 
@@ -25,8 +24,7 @@ When you click on the "Homemade Foods" button located in navigation bar, you wil
       :scale: 75 %
       :align: center
       :alt: 1
-      
-      Figure 1.2
+Figure 1.2
 
 When you fill the boxes which are related to properties of the product, your homemade food will be added to the website.
 
@@ -34,8 +32,7 @@ When you fill the boxes which are related to properties of the product, your hom
       :scale: 75 %
       :align: center
       :alt: 1
-      
-      Figure 1.3
+Figure 1.3
 
 You can see your added products from the "List My Products" link (Figure 1.3) which is in account page.
 
@@ -43,8 +40,7 @@ You can see your added products from the "List My Products" link (Figure 1.3) wh
       :scale: 75 %
       :align: center
       :alt: 1
-      
-      Figure 1.4
+Figure 1.4
 
 When you click "List My Products" link which is in Figure 1.3, you will see the page which is shown in below in Figure 1.4. You can see your product's properties, update your product's properties or delete your product from this page.
 
@@ -54,8 +50,7 @@ When you click on the name of your product (in this example, "Chocolate cookies"
       :scale: 75 %
       :align: center
       :alt: 1
-      
-      Figure 1.5
+Figure 1.5
 
 You can also comment to the products which is shown like in Figure 1.6.
 
@@ -63,8 +58,7 @@ You can also comment to the products which is shown like in Figure 1.6.
       :scale: 75 %
       :align: center
       :alt: 1
-      
-      Figure 1.6
+Figure 1.6
 
 Wooden Crafts
 -------------
