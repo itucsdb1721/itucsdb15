@@ -9,5 +9,5 @@ Register/Login
 ---------------
 Register and Login pages are accessible from home page. 
 
-.. image:: itucsdb1721/docs/user/member2/register-login.png
+.. image:: https://github.com/itucsdb1721/itucsdb1721/blob/master/docs/user/member2/register-login.png?raw=true
       :width: 800
