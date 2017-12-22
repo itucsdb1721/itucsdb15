@@ -154,9 +154,158 @@ server.py
 
 Homemade food specific functions are given above with GET/POST operations.
 
+
 *************
 Wooden Crafts
 *************
+
+Table
+-----
+
+Wooden Craft table exists in the server.py file.
+
+.. code-block:: sql
+
+       CREATE TABLE WOODEN_CRAFT (
+                                 PRODUCT_ID SERIAL PRIMARY KEY REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
+                                 PIC TEXT,
+                                 CSIZE TEXT,
+                                 COLOUR CHARACTER(40),
+                                 CRAFT_KIND VARCHAR(100) NOT NULL,
+                                 PRICE VARCHAR(10),
+                                 DESCRIPTION TEXT
+                                 )
+
+PRODUCT_ID attribute references Products table's PRODUCT_ID attribute.
+
+Class
+-----
+
+.. code-block:: python
+
+        class WoodenCraft():
+           def __init__(self, pic, size, colour, craft_kind, price, description):
+               self.pic = pic
+               self.size = size
+               self.colour = colour
+               self.craft_kind = craft_kind
+               self.price = price
+               self.description = description
+               
+Class Operations
+----------------
+Wooden Craft's class operations exists in wood_store.py.
+
+
+- The following database operations are implemented for Wooden Craft:
+
+    -Add Operation
+
+.. code-block:: python
+
+          def add_woodencraft(conf, product, wooden_craft):
+              with dbapi2.connect(conf) as connection:
+                   cursor = connection.cursor()
+                   query = """INSERT INTO PRODUCTS (PNAME, PKIND, USER_ID) VALUES (%s, %s, %s)"""
+                   cursor.execute(query, (product.name, product.kind, product.seller))
+
+                   query2 = """SELECT PRODUCT_ID FROM PRODUCTS WHERE PNAME = %s AND PKIND = %s AND USER_ID = %s"""
+                   cursor.execute(query2, (product.name, product.kind, product.seller))
+
+                   for row in cursor:
+                       product_id = row
+
+                   query2 = """INSERT INTO WOODEN_CRAFT (PRODUCT_ID, PIC, CSIZE, COLOUR, CRAFT_KIND, PRICE, DESCRIPTION) VALUES (%s, %s,                    %s, %s, %s, %s, %s)"""
+                   cursor.execute(query2, (product_id, wooden_craft.pic, wooden_craft.size, wooden_craft.colour,                                            wooden_craft.craft_kind, wooden_craft.price, wooden_craft.description))
+                   connection.commit()
+ 
+Adds Wooden Craft to both Products and Wooden Craft table.
+
+     -Delete Operation
+
+.. code-block:: python
+
+           def delete_woodencraft(conf, product_id):
+              with dbapi2.connect(conf) as connection:
+                   cursor = connection.cursor()
+                   query = "DELETE FROM WOODEN_CRAFT WHERE (PRODUCT_ID = %s)"
+                   cursor.execute(query, (product_id,))
+                   connection.commit()
+
+Deletes the Wooden Craft that has the given product_id as parameter.
+
+      -Update Operations
+
+.. code-block:: python
+
+    def update_woodencraft(conf, product_id, new_craft):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query = "UPDATE WOODEN_CRAFT SET PIC = %s, CSIZE = %s, COLOUR = %s, CRAFT_KIND = %s, PRICE = %s, DESCRIPTION = %s WHERE                (PRODUCT_ID = %s)"
+            cursor.execute(query, (new_craft.pic, new_craft.size, new_craft.colour, new_craft.craft_kind, new_craft.price,                           new_craft.description, product_id))
+            connection.commit()
+
+Update an attribute of a Wooden Craft.
+
+      -Select Operations
+
+.. code-block:: python
+
+       def get_woodencraft(conf, product_id):
+              with dbapi2.connect(conf) as connection:
+                   cursor = connection.cursor()
+                   query = "SELECT PIC, CSIZE, COLOUR, CRAFT_KIND, PRICE, DESCRIPTION FROM WOODEN_CRAFT WHERE PRODUCT_ID = %s"
+                   cursor.execute(query, (product_id,))
+                   (pic, size, colour, craft_kind, price, description) = cursor.fetchone()
+                   craft = WoodenCraft(pic, size, colour, craft_kind, price, description)
+                   return craft
+                   
+Selects Wooden Craft by product_id.
+
+.. code-block:: python
+
+    def get_woodencrafts(conf):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query = """SELECT PRODUCTS.PRODUCT_ID, PNAME, PIC, NICKNAME, PRICE FROM PRODUCTS INNER JOIN WOODEN_CRAFT ON                             PRODUCTS.PRODUCT_ID = WOODEN_CRAFT.PRODUCT_ID
+            INNER JOIN USERS ON PRODUCTS.USER_ID = USERS.USER_ID"""
+            cursor.execute(query, )
+            crafts = cursor.fetchall()
+        return crafts
+            
+Selects all the Wooden Crafts.
+
+Templates
+---------
+**add_woodencraft.html**, **wooden_crafts.html** and **list_wooden_crafts.html** **update_craft.html** are the related templates to Wooden Craft.
+
+GET/POST Operations
+-------------------
+server.py
+
+.. code-block:: python
+
+       @app.route('/add_wooden_crafts', methods=['GET', 'POST'])
+       @login_required
+       def add_wooden_crafts():
+              if request.method == 'GET':
+                     return render_template('add_woodencraft.html')
+
+              seller_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+
+              product = Product(request.form['name'], "wooden_craft", seller_id)
+              wooden_craft = WoodenCraft(request.form['pic'], request.form['size'], request.form['colour'], request.form['craft_kind'],               request.form['price'], request.form['description'])
+              WoodStore.add_woodencraft(app.config['dsn'], product, wooden_craft)
+
+              return redirect(url_for('home_page'))
+
+       @app.route('/list_wooden_crafts', methods=['GET', 'POST'])
+       def list_wooden_crafts():
+           if request.method == 'GET':
+               wooden_craft = WoodStore.get_woodencrafts(app.config['dsn'])
+               return render_template('list_wooden_crafts.html', wooden_craft = wooden_craft)
+
+Wooden craft specific functions are given above with GET/POST operations.
 
 ***********
 Accessories
