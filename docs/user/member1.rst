@@ -14,7 +14,7 @@ Homemade foods can be added to the website via "Homemade Foods" button in the na
       :scale: 75 %
       :align: center
       :alt: 1
- Figure 1.1 
+Figure 1.1 
 
 Figure 1.1 is a screenshot of the home page which shows the add button for Homemade Foods in the navigation bar.
 
