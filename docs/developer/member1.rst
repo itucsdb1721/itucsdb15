@@ -310,3 +310,5 @@ Wooden craft specific functions are given above with GET/POST operations.
 ***********
 Accessories
 ***********
+
+Accesories table's operations are similar to the previous operations.
