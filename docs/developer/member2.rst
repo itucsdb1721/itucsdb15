@@ -374,51 +374,51 @@ server.py
         else:
              return redirect(url_for('login'))
 
-@app.route('/logout')
-def logout_page():
-    logout_user()
-    flash('You have logged out.')
-    return redirect(url_for('home_page'))
+       @app.route('/logout')
+       def logout_page():
+              logout_user()
+              flash('You have logged out.')
+              return redirect(url_for('home_page'))
 
-@app.route('/account')
-def account():
-    return render_template('account.html')
+       @app.route('/account')
+       def account():
+              return render_template('account.html')
 
-@app.route('/list_products')
-def list_products():
-    user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
-    products = ProductStore.get_products(app.config['dsn'], user_id)
-    return render_template('list_users_product.html', products=products)
+       @app.route('/list_products')
+       def list_products():
+              user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+              products = ProductStore.get_products(app.config['dsn'], user_id)
+              return render_template('list_users_product.html', products=products)
 
-@app.route('/change_password', methods=['GET', 'POST'])
-def change_password():
-    if request.method == 'GET':
-        return render_template('change_password.html')
-    oldpassword = request.form['oldpassword']
-    truepassword = Store.is_exist(app.config['dsn'], current_user.nickname)
-    if pwd_context.verify(oldpassword, truepassword):
-        if (request.form['newpassword'] == request.form['newpassword2']):
-            Store.update_password(app.config['dsn'], current_user.nickname, hashing(request.form['newpassword']))
+       @app.route('/change_password', methods=['GET', 'POST'])
+       def change_password():
+              if request.method == 'GET':
+                     return render_template('change_password.html')
+              oldpassword = request.form['oldpassword']
+              truepassword = Store.is_exist(app.config['dsn'], current_user.nickname)
+              if pwd_context.verify(oldpassword, truepassword):
+                     if (request.form['newpassword'] == request.form['newpassword2']):
+                            Store.update_password(app.config['dsn'], current_user.nickname, hashing(request.form['newpassword']))
+                     else:
+                            return render_template('change_password.html', error2 = 'Enter the new password again.')
+              else:
+                     return render_template('change_password.html', error1='Wrong password.')
+
+              return redirect(url_for('account'))
+
+        @app.route('/delete_account', methods=['GET', 'POST'])
+        def delete_account():
+        if request.method == 'GET':
+              return render_template('delete_account.html')
+        entered_password = request.form['password']
+        truepassword = Store.is_exist(app.config['dsn'], current_user.nickname)
+        if pwd_context.verify(entered_password, truepassword):
+              user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+              logout_user()
+              Store.delete_user(app.config['dsn'], user_id)
+              return redirect(url_for('home_page'))
         else:
-            return render_template('change_password.html', error2 = 'Enter the new password again.')
-    else:
-        return render_template('change_password.html', error1='Wrong password.')
-
-    return redirect(url_for('account'))
-
-@app.route('/delete_account', methods=['GET', 'POST'])
-def delete_account():
-    if request.method == 'GET':
-        return render_template('delete_account.html')
-    entered_password = request.form['password']
-    truepassword = Store.is_exist(app.config['dsn'], current_user.nickname)
-    if pwd_context.verify(entered_password, truepassword):
-        user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
-        logout_user()
-        Store.delete_user(app.config['dsn'], user_id)
-        return redirect(url_for('home_page'))
-    else:
-        return render_template('delete_account.html', error = 'Wrong password.')
+              return render_template('delete_account.html', error = 'Wrong password.')
            
 User related functions are given above with GET/POST operations.
 
