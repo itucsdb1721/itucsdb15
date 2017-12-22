@@ -33,7 +33,6 @@ When you fill the boxes which are related to properties of the product, your hom
       :scale: 75 %
       :align: center
       :alt: 1
-      
 You can see your added products from the "List My Products" link (Figure 1.3) which is in account page.
 
  Figure 1.4:
@@ -41,7 +40,6 @@ You can see your added products from the "List My Products" link (Figure 1.3) wh
       :scale: 75 %
       :align: center
       :alt: 1
-      
 When you click "List My Products" link which is in Figure 1.3, you will see the page which is shown in below in Figure 1.4. You can see your product's properties, update your product's properties or delete your product from this page.
 
 When you click on the name of your product (in this example, "Chocolate cookies") you will see the page which includes product's properties. The info page of the product is shown in Figure 1.5.
