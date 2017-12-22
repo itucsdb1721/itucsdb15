@@ -426,3 +426,131 @@ User related functions are given above with GET/POST operations.
 ***********
 Comments
 ***********
+
+Table
+-----
+
+Comments table exists in the server.py file.
+
+.. code-block:: sql
+
+       CREATE TABLE COMMENTS (
+                                          COMMENT_ID SERIAL PRIMARY KEY,
+                                          USER_ID SERIAL REFERENCES USERS(USER_ID) ON DELETE CASCADE,
+                                          PRODUCT_ID SERIAL REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE,
+                                          COMMENT VARCHAR(200) NOT NULL
+                                          )
+
+PRODUCT_ID attribute references Products table's PRODUCT_ID attribute. When a product is deleted, it is deleted from Products table by using its ID, thus all of the comments that belong to that product are deleted because of ON DELETE CASCADE property. The same for USERS table.
+
+Class
+-----
+
+.. code-block:: python
+
+    class Comment():
+       def __init__(self, user_id, product_id, comment):
+              self.user_id = user_id
+              self.product_id = product_id
+              self.comment = comment
+
+Class Operations
+----------------
+Clothe's class operations exists in clothes_store.py.
+
+
+- The following database operations are implemented for Clothes:
+
+    -Add Operation
+
+.. code-block:: python
+
+    def add_comment(conf, comments):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query2 = """INSERT INTO COMMENTS (USER_ID, PRODUCT_ID, COMMENT) VALUES (%s, %s, %s)"""
+            cursor.execute(query2, (comments.user_id, comments.product_id, comments.comment))
+            connection.commit()
+ 
+ 
+Adds comment to COMMENTS table.
+
+     -Delete Operation
+
+.. code-block:: python
+
+    def delete_comment(conf, key):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query = "DELETE FROM COMMENTS WHERE (COMMENT_ID = %s)"
+            cursor.execute(query, (key,))
+            connection.commit()
+
+Comment is deleted by using comment_id.
+    
+      -Update Operations
+
+.. code-block:: python
+
+    def update_comment(conf, comment_id, newcomment):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query = "UPDATE COMMENTS SET COMMENT = %s WHERE (COMMENT_ID = %s)"
+            cursor.execute(query, (newcomment, comment_id))
+            connection.commit()
+            
+Update content of the comment.
+
+      -Select Operations
+
+.. code-block:: python
+
+    def get_comment_for_product(conf, product_id):
+        with dbapi2.connect(conf) as connection:
+            cursor = connection.cursor()
+            query = "SELECT NICKNAME, COMMENT, COMMENT_ID FROM COMMENTS INNER JOIN USERS ON COMMENTS.USER_ID = USERS.USER_ID WHERE PRODUCT_ID = %s ORDER BY COMMENT_ID DESC"
+            cursor.execute(query, (product_id,))
+            comments = cursor.fetchall()
+            return comments
+
+Selects comments that related to certain product by using product_id. Also takes user nickname from users table by joining users table with comments table.
+
+Templates
+---------
+**clothe_page.html**, **accessory_page.html**, **wooden_crafts.html**, **homemade_foods.html** and **update_comment.html** are the related templates to Comments.
+
+GET/POST Operations
+-------------------
+server.py
+
+.. code-block:: python
+           
+        @app.route('/product_page=<int:product_id>', methods = ['GET', 'POST'])
+        def product_page(product_id):
+            product = ProductStore.get_product(app.config['dsn'], product_id)
+            if (product.kind == "clothe"):
+             clothe = ClotheStore.get_clothe(app.config['dsn'], product_id)
+             comments = CommentStore.get_comment_for_product(app.config['dsn'], product_id)
+             if request.method == 'GET':
+                  return render_template('clothe_page.html', product = product, clothe = clothe, comments = comments, product_id = product_id)
+             get_comment = request.form['user_comment']
+             if get_comment:
+                user_id = Store.get_userid(app.config['dsn'], current_user.nickname)
+                comment = Comment(user_id, product_id, get_comment)
+                CommentStore.add_comment(app.config['dsn'], comment)
+                return redirect(url_for('product_page', product_id = product_id))
+                
+          @app.route('/update_comment=<int:comment_id>=<int:product_id>=<string:old_comment>', methods = ['GET', 'POST'])
+          def update_comment(comment_id, old_comment, product_id):
+                if request.method == 'GET':
+                     return render_template('update_comment.html', old_comment = old_comment)
+                new_comment = request.form['user_comment']
+                CommentStore.update_comment(app.config['dsn'], comment_id, new_comment)
+                return redirect(url_for('product_page', product_id=product_id))
+           
+          @app.route('/delete_comment=<int:comment_id>=<int:product_id>')
+          def delete_comment(comment_id, product_id):
+              CommentStore.delete_comment(app.config['dsn'], comment_id)
+              return redirect(url_for('product_page', product_id = product_id))
+
+Comment related functions are given above with GET/POST operations.
