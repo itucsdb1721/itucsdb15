@@ -9,5 +9,6 @@ Register/Login
 ---------------
 Register and Login pages are accessible from home page. 
 .. image:: member2/register-login.png
-   :scale: 50 %
-   :alt: 1
+      :scale: 50 %
+      :align: center
+      :alt: 1
