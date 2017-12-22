@@ -188,7 +188,7 @@ Users
 Table
 -----
 
-Clothes table exists in the server.py file.
+Users table exists in the server.py file.
 
 .. code-block:: sql
 
