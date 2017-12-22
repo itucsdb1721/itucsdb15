@@ -44,7 +44,7 @@ At listing products page, it is possible to accessing product's page, updating t
 .. image:: https://github.com/itucsdb1721/itucsdb1721/blob/master/docs/user/member2/list_products.png?raw=true
       :width: 700
       
- Clothe updating page comes with old features and user changes the part that s/he wanted and saves the product.
+Clothe updating page comes with old features and user changes the part that s/he wanted and saves the product.
  
 .. image:: https://github.com/itucsdb1721/itucsdb1721/blob/master/docs/user/member2/update_clothe.png?raw=true
       :width: 700
