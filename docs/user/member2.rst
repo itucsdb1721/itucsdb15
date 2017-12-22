@@ -8,4 +8,4 @@ Listing user's products (clothe part).
 Register/Login
 ---------------
 Register and Login pages are accessible from home page. 
-![alt text](itucsdb1721/docs/user/member2/register-login.png)
+![alt text](https://github.com/itucsdb1721/itucsdb1721/docs/user/member2/register-login.png)
