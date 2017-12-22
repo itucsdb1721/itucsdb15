@@ -1,7 +1,7 @@
 Parts Implemented by Gamze Akyol
 ================================
 
-** Homemade foods, wooden crafts and accessories tables are implemented.**
+**Homemade foods, wooden crafts and accessories tables are implemented.**
 
 Firstly, you should register, then log in to Kermes to add all of these products to the website.
 
@@ -51,7 +51,7 @@ When you click on the name of your product (in this example, "Chocolate cookies"
       :scale: 75 %
       :align: center
       :alt: 1
-      
+
 You can also comment to the products which is shown like in Figure 1.6.
 
  Figure 1.6:
