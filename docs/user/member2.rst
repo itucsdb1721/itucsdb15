@@ -8,6 +8,6 @@ Listing user's products (clothe part).
 Register/Login
 ---------------
 Register and Login pages are accessible from home page. 
-.. figure:: member2/register-login.png
+.. image:: member2/register-login.png
    :scale: 50 %
    :alt: 1
